@@ -4,11 +4,13 @@ import {
   BaseEntity,
   ManyToOne,
   JoinColumn,
+  Index,
 } from "typeorm";
 import { Product } from "./Product";
 import { Brand } from "./Brand";
 
 @Entity({ name: "product_brand" })
+@Index(["product", "brand"], { unique: true })
 export class ProductBrand extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

@@ -180,9 +180,18 @@ app.post("/insertProductAlternative", async (req, res) => {
             insertedProductBrandSearch.product = productBrandSearch[k].product;
             await insertedProductBrandSearch.save();
           } catch (err) {}
+
+          try {
+            let insertedProductBrand = new ProductBrand();
+            insertedProductBrand.brand = brand;
+            insertedProductBrand.product = productBrandSearch[k].product;
+            await insertedProductBrand.save();
+          } catch (err) {}
         }
-        brand.completed = true;
-        await brand.save();
+        brandSearch[i].completed = true;
+        await brandSearch[i].save();
+        // brand.completed = true;
+        // await brand.save();
         // return res.send({ productBrand });
       }
     }
