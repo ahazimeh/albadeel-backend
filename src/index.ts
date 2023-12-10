@@ -130,7 +130,6 @@ app.post("/insertProductAlternative", async (req, res) => {
   const allBrands = await Brand.findBy({
     brandSearch: { completed: false },
   });
-  return res.send({ hi: "" });
   // return res.send({ allBrands });
   for (let j = 0; j < allBrands.length; j++) {
     // return res.send({ allBrands });

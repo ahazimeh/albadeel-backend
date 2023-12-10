@@ -188,11 +188,9 @@ async function insertIntoProductBrand(
 
   if (product) productBrand.product = product;
   if (product && brand) {
-    const existingProductBrand = await ProductBrand.findOne({
-      where: {
-        brand: { id: brandId },
-        product: { id: productId },
-      },
+    const existingProductBrand = await ProductBrand.findOneBy({
+      brand: { id: brandId },
+      product: { id: productId },
       // where: {
       //   brand: brand,
       //   product: product,
