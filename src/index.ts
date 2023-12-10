@@ -20,6 +20,9 @@ import { ProductAlternative } from "./entity/ProductAlternative";
 import { ILike, IsNull, Not } from "typeorm";
 import { ProductNotFound } from "./entity/ProductNotFound";
 import { ProductBrand } from "./entity/ProductBrand";
+import parser from "csv-parser";
+import fs from "fs";
+import path from "path";
 
 var app = express();
 
@@ -322,6 +325,23 @@ app.use((err: any, req: any, res: any, next: any) => {
 // app.listen(process.env.PORT, () => {
 //   console.log("server started on localhost:4000");
 // });
+app.get("/csv-parse", (req, res, next) => {
+  fs.createReadStream(
+    "/home/ali/Desktop/albadeel/albadeel-backend/src/companies.csv"
+  )
+    .pipe(parser({ separator: ";" }))
+    .on("data", (data) => {
+      console.log("gggg", data);
+      return;
+    })
+    .on("end", () => {
+      // [
+      //   { NAME: 'Daffy Duck', AGE: '24' },
+      //   { NAME: 'Bugs Bunny', AGE: '22' }
+      // ]
+    });
+  res.send("hiii");
+});
 
 app.listen(process.env.PORT || 4000, () => {
   console.log("server started on localhost:4000");
