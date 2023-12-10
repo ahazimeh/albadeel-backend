@@ -132,9 +132,6 @@ app.post("/insertProductAlternative", async (req, res) => {
         where: { brandSearch: { completed: false } },
         take: 10,
     });
-    if (1 == 1) {
-        return res.send({ allBrands });
-    }
     for (let j = 0; j < allBrands.length; j++) {
         let brandId = allBrands[j].id;
         const brand = await Brand_1.Brand.findOneBy({ id: brandId });
