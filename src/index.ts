@@ -24,6 +24,7 @@ import parser from "csv-parser";
 import fs from "fs";
 import path from "path";
 import { BrandSearch } from "./entity/BrandSearch";
+import { ProductBrandSearch } from "./entity/ProductBrandSearch";
 
 var app = express();
 
@@ -147,18 +148,43 @@ app.post("/insertProductAlternative", async (req, res) => {
     //   continue;
     //   // return res.send({ success: false, brand: brand });
     // }
-    // const findCompleted = await Brand.findOneBy({
-    //   completed: true,
-    //   searchText: brand?.searchText,
-    // });
     // if (!findCompleted)
     for (let i = 0; i < brandSearch.length; i++) {
-      await scrapeBrand(
-        `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
-        brandId,
-        brandSearch[i].id
-        // "7up"
-      );
+      const findCompleted = await BrandSearch.findOneBy({
+        completed: true,
+        searchText: brandSearch[i]?.searchText,
+      });
+      console.log("zzzzzzz", findCompleted);
+      if (!findCompleted) {
+        await scrapeBrand(
+          `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
+          brandId,
+          brandSearch[i].id
+          // "7up"
+        );
+      } else {
+        console.log("hii", findCompleted.id);
+        const productBrandSearch = await ProductBrandSearch.find({
+          where: {
+            brand_search: { id: findCompleted.id },
+          },
+          relations: ["brand_search", "product"],
+          // relations: ["product", "brand"],
+        });
+        // return res.send({ productBrandSearch });
+        for (let k = 0; k < productBrandSearch.length; k++) {
+          // productBrand[k].product.id
+          try {
+            let insertedProductBrandSearch = new ProductBrandSearch();
+            insertedProductBrandSearch.brand_search = brandSearch[i];
+            insertedProductBrandSearch.product = productBrandSearch[k].product;
+            await insertedProductBrandSearch.save();
+          } catch (err) {}
+        }
+        brand.completed = true;
+        await brand.save();
+        // return res.send({ productBrand });
+      }
     }
     // else {
     //   console.log("hii", findCompleted.id);

@@ -7,6 +7,7 @@ import { ProductBrand } from "../entity/ProductBrand";
 import { Brand } from "../entity/Brand";
 import { AppDataSource } from "../data-source";
 import { BrandSearch } from "../entity/BrandSearch";
+import { ProductBrandSearch } from "../entity/ProductBrandSearch";
 
 function incrementLastNumberInUrl(url: string) {
   // Match the last number in the URL using a regular expression
@@ -174,11 +175,13 @@ export const scrapeWebsite = async (
 
 async function insertIntoProductBrand(
   productId: number,
-  brandId: number
+  brandId: number,
+  brandSearchId: number
 ): Promise<void> {
   // Assuming you have product and alternative ids, you can insert into the join table like this
   const product = await Product.findOneBy({ id: productId });
   const brand = await Brand.findOneBy({ id: brandId });
+  const brandSearch = await BrandSearch.findOneBy({ id: brandSearchId });
 
   const productBrand = new ProductBrand();
   if (brand) productBrand.brand = brand;
@@ -196,6 +199,24 @@ async function insertIntoProductBrand(
       // },
     });
     if (!existingProductBrand) await productBrand.save();
+  }
+
+  const productBrandSearch = new ProductBrandSearch();
+  if (brandSearch) productBrandSearch.brand_search = brandSearch;
+
+  if (product) productBrandSearch.product = product;
+  if (product && brandSearch) {
+    const existingProductBrandSearch = await ProductBrandSearch.findOne({
+      where: {
+        brand_search: { id: brandSearchId },
+        product: { id: productId },
+      },
+      // where: {
+      //   brand: brand,
+      //   product: product,
+      // },
+    });
+    if (!existingProductBrandSearch) await productBrandSearch.save();
   }
 }
 
@@ -289,14 +310,14 @@ export const scrapeBrand = async (
       .then((res) => {
         if (res) {
           console.log("asdasdsad", res.id);
-          insertIntoProductBrand(res.id, brandId);
+          insertIntoProductBrand(res.id, brandId, brandSearchId);
           // insert here using res.id & alternativeId
         } else {
           product
             .save()
             .then((res) => {
               console.log("bbbbbbbbbbb", res);
-              insertIntoProductBrand(res.id, brandId);
+              insertIntoProductBrand(res.id, brandId, brandSearchId);
               // insert here using res.id & alternativeId
             })
             .catch((err) => {});

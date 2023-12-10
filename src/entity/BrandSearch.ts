@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { ProductBrand } from "./ProductBrand";
 import { Brand } from "./Brand";
+import { ProductBrandSearch } from "./ProductBrandSearch";
 
 @Entity()
 export class BrandSearch extends BaseEntity {
@@ -24,4 +25,10 @@ export class BrandSearch extends BaseEntity {
 
   @Column({ default: false })
   completed: boolean;
+
+  @OneToMany(
+    (type) => ProductBrandSearch,
+    (productBrandSearch) => productBrandSearch.brand_search
+  )
+  productBrandSearch: ProductBrandSearch[];
 }
