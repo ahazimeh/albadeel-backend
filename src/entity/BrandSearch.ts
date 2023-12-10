@@ -15,13 +15,13 @@ export class BrandSearch extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
-
   @Column({ nullable: true })
   searchText: string;
 
   @ManyToOne(() => Brand, (brand) => brand.id)
   @JoinColumn({ name: "brand_id" })
   brand: Brand;
+
+  @Column({ default: false })
+  completed: boolean;
 }
