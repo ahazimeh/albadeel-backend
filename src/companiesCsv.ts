@@ -1,4 +1,4 @@
-[
+export const comapniesCsv = [
   {
     Company: "Abreva",
     Category: "Healthcare",
@@ -1313,9 +1313,9 @@
     Keywords: "Liberty Latin, Telecommunications",
   },
   {
-    Company: "Libert�",
+    Company: "Liberté",
     Category: "Food and Beverage",
-    Keywords: "Yogurt, Libert�",
+    Keywords: "Yogurt, Liberté",
   },
   {
     Company: "Licor Polo",

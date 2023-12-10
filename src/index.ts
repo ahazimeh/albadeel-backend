@@ -25,6 +25,7 @@ import fs from "fs";
 import path from "path";
 import { BrandSearch } from "./entity/BrandSearch";
 import { ProductBrandSearch } from "./entity/ProductBrandSearch";
+import { comapniesCsv } from "./companiesCsv";
 
 var app = express();
 
@@ -397,6 +398,20 @@ app.get("/csv-parse", (req, res, next) => {
       // ]
     });
   res.send("hiii");
+});
+
+app.get("/insertKeywords", async (req, res, next) => {
+  for (let i = 0; i < comapniesCsv.length; i++) {
+    const brand = await Brand.findOneBy({ name: comapniesCsv[i].Company });
+    console.log(brand?.id);
+    const brandSearch = new BrandSearch();
+    console.log(comapniesCsv[i].Company);
+    if (!brand) return;
+    brandSearch.brand = brand;
+    let keywords = comapniesCsv[i].Keywords.split(", ");
+    // console.log(keywords);
+    // brandSearch.searchText =
+  }
 });
 
 app.listen(process.env.PORT || 4000, () => {
