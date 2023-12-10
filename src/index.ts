@@ -373,15 +373,24 @@ app.use((err: any, req: any, res: any, next: any) => {
 //   console.log("server started on localhost:4000");
 // });
 app.get("/csv-parse", (req, res, next) => {
+  let csvArr: any = [];
   fs.createReadStream(
     "/home/ali/Desktop/albadeel/albadeel-backend/src/companies.csv"
   )
     .pipe(parser({ separator: ";" }))
     .on("data", (data) => {
-      console.log("gggg", data);
+      console.log("gggg", Object.keys(data));
+      let obj: any = {};
+      for (let i = 0; i < Object.keys(data).length; i++) {
+        let dataObj = Object.keys(data)[i];
+        if (dataObj) console.log(data[dataObj]);
+        if (dataObj) obj[dataObj] = data[dataObj];
+      }
+      csvArr.push(obj);
       return;
     })
     .on("end", () => {
+      console.log(JSON.stringify(csvArr));
       // [
       //   { NAME: 'Daffy Duck', AGE: '24' },
       //   { NAME: 'Bugs Bunny', AGE: '22' }
