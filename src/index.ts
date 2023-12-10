@@ -1,0 +1,328 @@
+import "dotenv/config";
+import "reflect-metadata";
+import express from "express";
+import requireLogin from "./middlewares/requireLogin";
+import { AppDataSource } from "./data-source";
+import { sendEmail } from "./utils/sendMail";
+import * as cheerio from "cheerio";
+import axios from "axios";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import bodyParser from "body-parser";
+import { User } from "./entity/User";
+import bcrypt from "bcrypt";
+import { Product } from "./entity/Product";
+import { Alternative } from "./entity/Alternative";
+import { Brand } from "./entity/Brand";
+import { scrapeBrand, scrapeWebsite } from "./utils/scrapWebsite";
+import { comapnies } from "./companies";
+import { ProductAlternative } from "./entity/ProductAlternative";
+import { ILike, IsNull, Not } from "typeorm";
+import { ProductNotFound } from "./entity/ProductNotFound";
+import { ProductBrand } from "./entity/ProductBrand";
+
+var app = express();
+
+// create application/json parser
+var jsonParser = bodyParser.json();
+
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+app.use(jsonParser);
+
+puppeteer.use(StealthPlugin());
+
+// app.use("/", requireLogin);
+let a: string;
+AppDataSource.initialize()
+  .then(() => {
+    a = "success";
+    // here you can start to work with your database
+  })
+  .catch((error) => {
+    a = "could not connect";
+    console.log(error);
+  });
+
+const url1 = "https://www.barcodelookup.com/7up/1";
+async function getProducts() {
+  try {
+    const book_data: any = [];
+    const response = await axios.get("https://www.barcodelookup.com/7up/1", {
+      headers: {
+        "User-Agent": "PostmanRuntime/7.29.4",
+        Accept: "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        Connection: "keep-alive",
+      },
+    });
+    const $ = cheerio.load(response.data);
+    const products = $(".product-search-item-text");
+    products.each(function () {
+      let a = $(this).find("p").text();
+    });
+  } catch (error) {
+    a = error.message;
+    console.error("an error", error.message);
+  }
+}
+
+app.get(
+  "/",
+  // requireLogin ,
+  (_, res) => {
+    return res.send({ message: "success", a, env: process.env.NODE_ENV });
+    // console.log("aazzzz");
+    // console.log("aa1a", process.env.ACCESS_TOKEN_SECRET);
+    // sendEmail(
+    //   "hazimeh95@gmail.com",
+    //   `<a href="http://localhost:3000/change-password/token">reset password</a>`
+    // );
+    // getGenre().then(() => {
+    //   res.send("aa31");
+    // });
+    // getProducts().then(() => {
+    //   res.send("aa31");
+    // });
+  }
+);
+app.post("/login", async (req, res) => {
+  try {
+    const findUser = await User.findOneBy({ email: req.body.email });
+    if (findUser) {
+      const comparePass = await bcrypt.compare(
+        req.body.password,
+        findUser.password
+      );
+      if (comparePass) return res.json({ success: true, token: "asdasda" });
+    }
+    return res.json({ success: false });
+  } catch (err) {
+    return res.json({ success: false });
+  }
+});
+app.post("/register", async (req, res) => {
+  try {
+    const findUser = await User.findOneBy({ email: req.body.email });
+    if (findUser) {
+      return res.json({ success: false, message: "email already exists" });
+    }
+    const user = new User();
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.email = req.body.email;
+    user.password = await bcrypt.hash(req.body.password, 8);
+    user.city = req.body.city;
+    user.country = req.body.country;
+    await user.save();
+    return res.json({ success: true });
+  } catch (err) {
+    return res.json({ success: false, message: "an error has occured" });
+  }
+});
+app.post("/insertProductAlternative", async (req, res) => {
+  const allBrands = await Brand.find({
+    where: { completed: false, searchText: Not(IsNull()) },
+  });
+  for (let j = 0; j < allBrands.length; j++) {
+    // return res.send({ allBrands });
+    let brandId = allBrands[j].id;
+    const brand = await Brand.findOneBy({ id: brandId });
+    if (!brand) {
+      continue;
+    }
+    if (brand?.completed) {
+      continue;
+      // return res.send({ success: false, brand: brand });
+    }
+    const findCompleted = await Brand.findOneBy({
+      completed: true,
+      searchText: brand?.searchText,
+    });
+    if (!findCompleted)
+      await scrapeBrand(
+        `https://www.barcodelookup.com/${brand?.searchText}/1`,
+        brandId
+        // "7up"
+      );
+    else {
+      console.log("hii", findCompleted.id);
+      const productBrand = await ProductBrand.find({
+        where: {
+          brand: { id: findCompleted.id },
+        },
+        relations: ["brand", "product"],
+        // relations: ["product", "brand"],
+      });
+      for (let i = 0; i < productBrand.length; i++) {
+        // productBrand[i].product.id
+        let insertedProductBrand = new ProductBrand();
+        insertedProductBrand.brand = brand;
+        insertedProductBrand.product = productBrand[i].product;
+        await insertedProductBrand.save();
+      }
+      brand.completed = true;
+      await brand.save();
+      // return res.send({ productBrand });
+    }
+  }
+  // scrapeWebsite(
+  //   "https://www.barcodelookup.com/Cold-Sore-Treatment/1",
+  //   "7up"
+  //   // "7up"
+  // );
+  // scrapeWebsite(
+  //   "https://www.barcodelookup.com/beverage/1",
+  //   "7up"
+  //   // "7up"
+  // );
+  res.send("hii");
+});
+
+app.get("/getProduct/:barcode", async (req, res) => {
+  const product = await Product.findOneBy({ barcode: req.params.barcode });
+  console.log(req.params);
+  if (product) {
+    return res.json({ success: true, product });
+  }
+  let productNotFound = new ProductNotFound();
+  productNotFound.barcode = req.params.barcode;
+  try {
+    if (await productNotFound.save()) {
+      // try to find this product online;
+      const response = await axios.get(
+        `https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`,
+        {
+          headers: {
+            "User-Agent": "PostmanRuntime/7.29.4",
+            Accept: "*/*",
+            "Accept-Encoding": "gzip, deflate, br",
+            Connection: "keep-alive",
+          },
+        }
+      );
+      let insertProduct = new Product();
+      insertProduct.barcode = req.params.barcode;
+      insertProduct.category = response.data.products[0].category;
+      insertProduct.manufacturer = response.data.products[0].manufacturer;
+      insertProduct.brand = response.data.products[0].brand;
+      insertProduct.imageUrl = response.data.products[0].images[0];
+      insertProduct.name = response.data.products[0].title;
+      insertProduct.save();
+      return res.json({ success: true, product: insertProduct });
+
+      console.log(response);
+
+      // if found the save it and send it back to the user
+      // if not then also return an error // done because api return error
+    }
+    return;
+  } catch (err) {
+    return res.send({ success: false, message: "product not found" });
+  }
+  // const response = await axios.get(`https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`, {
+  //   headers: {
+  //     "User-Agent": "PostmanRuntime/7.29.4",
+  //     Accept: "*/*",
+  //     "Accept-Encoding": "gzip, deflate, br",
+  //     Connection: "keep-alive",
+  //   },
+  // });
+});
+console.log("sssssssssssssssss", process.env.NODE_ENV);
+app.get("/insertIntoProductNotFound", async (req, res) => {
+  let productNotFound = new ProductNotFound();
+  productNotFound.barcode = "asdsadsad";
+  try {
+    if (await productNotFound.save()) {
+      return res.json({ success: true });
+    }
+    return;
+  } catch (err) {
+    return res.json({ success: false });
+  }
+});
+
+app.post("/storeBrands", async (req, res) => {
+  for (let i = 0; i < comapnies.length; i++) {
+    const brand = new Brand();
+    brand.name = comapnies[i];
+    brand.supports = true;
+    await brand.save();
+  }
+  return res.json({ success: true });
+});
+
+app.get("/getAlternativeId", async (req, res) => {
+  // console.log(req.query.text.split(" "));
+  // @ts-ignore
+  const textArr = req.query.text.split(" ");
+  // Promise.all(textArr)
+  let arr = [];
+  for (let i = 0; i < textArr.length; i++) {
+    const alternative = Alternative.findOneBy({ name: textArr[i] });
+    arr.push(alternative);
+  }
+  let result: any = [];
+  result = await Promise.all(arr);
+  console.log("fff1", result);
+  for (let i = 0; i < result.length; i++) {
+    if (result[i]) {
+      return res.json({ success: true, alternativeId: result[i].id });
+    }
+  }
+  return res.json({
+    success: false,
+    message: "could not find alternatives for this product",
+  });
+});
+
+app.get("/getAlternative", async (req, res) => {
+  const productAlternative = await ProductAlternative.find({
+    // @ts-ignore
+    where: { alternative: { id: req.query.id } },
+    // @ts-ignore
+    skip: (req.query.page - 1) * 10,
+    take: 10,
+    relations: ["product"],
+  });
+  return res.json({ success: true, alternative: productAlternative });
+});
+
+app.get("/brand", async (req, res) => {
+  const reqBrand = req.query.brand;
+  if (!reqBrand) {
+    return res.json({ success: true, brand: null });
+  }
+  console.log("asdsad", reqBrand);
+  const brand = await Brand.findOneBy({ name: reqBrand as string });
+  return res.json({ success: true, brand });
+});
+
+app.get("/brands", async (req, res) => {
+  const reqBrand = req.query.text;
+  if (!reqBrand) {
+    return res.json({ success: true, brand: null });
+  }
+  const brands = await Brand.find({
+    where: {
+      name: ILike(`%${reqBrand}%`),
+    },
+    take: 10,
+  });
+
+  return res.json({ success: true, brands });
+});
+
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
+
+// app.listen(process.env.PORT, () => {
+//   console.log("server started on localhost:4000");
+// });
+
+app.listen(process.env.PORT || 4000, () => {
+  console.log("server started on localhost:4000");
+});

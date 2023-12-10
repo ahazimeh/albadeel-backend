@@ -1,0 +1,85 @@
+/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78
+            throw new Error(`DataSource is not set for this entity.`);
+                  ^
+
+Error: DataSource is not set for this entity.
+    at Product.getRepository (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78:19)
+    at Product.findOneBy (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:274:21)
+    at /home/albadeel/albadeel.co/dist/index.js:157:45
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at /home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:284:15
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:365:14)
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:376:14)
+
+Node.js v20.9.0
+/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78
+            throw new Error(`DataSource is not set for this entity.`);
+                  ^
+
+Error: DataSource is not set for this entity.
+    at Product.getRepository (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78:19)
+    at Product.findOneBy (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:274:21)
+    at /home/albadeel/albadeel.co/dist/index.js:157:45
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at /home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:284:15
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:365:14)
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:376:14)
+
+Node.js v20.9.0
+/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78
+            throw new Error(`DataSource is not set for this entity.`);
+                  ^
+
+Error: DataSource is not set for this entity.
+    at Product.getRepository (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78:19)
+    at Product.findOneBy (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:274:21)
+    at /home/albadeel/albadeel.co/dist/index.js:157:45
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at /home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:284:15
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:365:14)
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:376:14)
+
+Node.js v20.9.0
+/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78
+            throw new Error(`DataSource is not set for this entity.`);
+                  ^
+
+Error: DataSource is not set for this entity.
+    at Product.getRepository (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78:19)
+    at Product.findOneBy (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:274:21)
+    at /home/albadeel/albadeel.co/dist/index.js:157:45
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at /home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:284:15
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:365:14)
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:376:14)
+
+Node.js v20.9.0
+/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78
+            throw new Error(`DataSource is not set for this entity.`);
+                  ^
+
+Error: DataSource is not set for this entity.
+    at Product.getRepository (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:78:19)
+    at Product.findOneBy (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/typeorm/repository/BaseEntity.js:274:21)
+    at /home/albadeel/albadeel.co/dist/index.js:157:45
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/layer.js:95:5)
+    at /home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:284:15
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:365:14)
+    at param (/home/albadeel/nodevenv/albadeel.co/20/lib/node_modules/express/lib/router/index.js:376:14)
+
+Node.js v20.9.0
