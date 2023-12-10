@@ -404,11 +404,16 @@ app.get("/insertKeywords", async (req, res, next) => {
   for (let i = 0; i < comapniesCsv.length; i++) {
     const brand = await Brand.findOneBy({ name: comapniesCsv[i].Company });
     console.log(brand?.id);
-    const brandSearch = new BrandSearch();
     console.log(comapniesCsv[i].Company);
     if (!brand) return;
-    brandSearch.brand = brand;
     let keywords = comapniesCsv[i].Keywords.split(", ");
+    for (let i = 0; i < keywords.length; i++) {
+      const brandSearch = new BrandSearch();
+      brandSearch.brand = brand;
+      brandSearch.searchText = keywords[i];
+      brandSearch.save();
+    }
+
     // console.log(keywords);
     // brandSearch.searchText =
   }
