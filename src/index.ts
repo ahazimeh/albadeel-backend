@@ -127,8 +127,8 @@ app.post("/register", async (req, res) => {
   }
 });
 app.post("/insertProductAlternative", async (req, res) => {
-  const allBrands = await Brand.find({
-    where: { brandSearch: { completed: false } },
+  const allBrands = await Brand.findBy({
+    brandSearch: { completed: false },
   });
   return res.send({ hi: "" });
   // return res.send({ allBrands });
