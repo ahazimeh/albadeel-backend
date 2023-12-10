@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { ProductBrand } from "./ProductBrand";
+import { BrandSearch } from "./BrandSearch";
 
 @Entity()
 export class Brand extends BaseEntity {
@@ -26,4 +27,6 @@ export class Brand extends BaseEntity {
 
   @OneToMany((type) => ProductBrand, (productBrand) => productBrand.brand)
   productBrand: ProductBrand[];
+  @OneToMany((type) => BrandSearch, (brandSearch) => brandSearch.brand)
+  brandSearch: BrandSearch[];
 }

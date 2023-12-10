@@ -6,6 +6,7 @@ import { ProductAlternative } from "../entity/ProductAlternative";
 import { ProductBrand } from "../entity/ProductBrand";
 import { Brand } from "../entity/Brand";
 import { AppDataSource } from "../data-source";
+import { BrandSearch } from "../entity/BrandSearch";
 
 function incrementLastNumberInUrl(url: string) {
   // Match the last number in the URL using a regular expression
@@ -200,7 +201,8 @@ async function insertIntoProductBrand(
 
 export const scrapeBrand = async (
   url: string,
-  brandId: number
+  brandId: number,
+  brandSearchId: number
   // alternative: string
 ) => {
   // const lastUrlCount = url.split("/")[url.split("/").length - 1];
@@ -317,10 +319,10 @@ export const scrapeBrand = async (
   const linkExists = $(`a[href="${incrementLastNumberInUrl(url)}"]`).length > 0;
   console.log("asdas", linkExists);
   if (linkExists) {
-    await scrapeBrand(incrementLastNumberInUrl(url), brandId);
+    await scrapeBrand(incrementLastNumberInUrl(url), brandId, brandSearchId);
   } else {
-    await Brand.save({
-      id: brandId,
+    await BrandSearch.save({
+      id: brandSearchId,
       completed: true,
     });
   }

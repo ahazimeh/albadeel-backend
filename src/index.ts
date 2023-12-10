@@ -23,6 +23,7 @@ import { ProductBrand } from "./entity/ProductBrand";
 import parser from "csv-parser";
 import fs from "fs";
 import path from "path";
+import { BrandSearch } from "./entity/BrandSearch";
 
 var app = express();
 
@@ -125,8 +126,9 @@ app.post("/register", async (req, res) => {
 });
 app.post("/insertProductAlternative", async (req, res) => {
   const allBrands = await Brand.find({
-    where: { completed: false, searchText: Not(IsNull()) },
+    where: { brandSearch: { completed: false } },
   });
+  // return res.send({ allBrands });
   for (let j = 0; j < allBrands.length; j++) {
     // return res.send({ allBrands });
     let brandId = allBrands[j].id;
@@ -134,40 +136,50 @@ app.post("/insertProductAlternative", async (req, res) => {
     if (!brand) {
       continue;
     }
-    if (brand?.completed) {
-      continue;
-      // return res.send({ success: false, brand: brand });
-    }
-    const findCompleted = await Brand.findOneBy({
-      completed: true,
-      searchText: brand?.searchText,
+    const brandSearch = await BrandSearch.find({
+      where: { brand: { id: brandId }, completed: false },
     });
-    if (!findCompleted)
+    // return res.send({ brandSearch });
+    // for(let i =0;i<brandSearch.length;i++) {
+    //   if(brandSearch.)
+    // }
+    // if (brand?.completed) {
+    //   continue;
+    //   // return res.send({ success: false, brand: brand });
+    // }
+    // const findCompleted = await Brand.findOneBy({
+    //   completed: true,
+    //   searchText: brand?.searchText,
+    // });
+    // if (!findCompleted)
+    for (let i = 0; i < brandSearch.length; i++) {
       await scrapeBrand(
-        `https://www.barcodelookup.com/${brand?.searchText}/1`,
-        brandId
+        `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
+        brandId,
+        brandSearch[i].id
         // "7up"
       );
-    else {
-      console.log("hii", findCompleted.id);
-      const productBrand = await ProductBrand.find({
-        where: {
-          brand: { id: findCompleted.id },
-        },
-        relations: ["brand", "product"],
-        // relations: ["product", "brand"],
-      });
-      for (let i = 0; i < productBrand.length; i++) {
-        // productBrand[i].product.id
-        let insertedProductBrand = new ProductBrand();
-        insertedProductBrand.brand = brand;
-        insertedProductBrand.product = productBrand[i].product;
-        await insertedProductBrand.save();
-      }
-      brand.completed = true;
-      await brand.save();
-      // return res.send({ productBrand });
     }
+    // else {
+    //   console.log("hii", findCompleted.id);
+    //   const productBrand = await ProductBrand.find({
+    //     where: {
+    //       brand: { id: findCompleted.id },
+    //     },
+    //     relations: ["brand", "product"],
+    //     // relations: ["product", "brand"],
+    //   });
+    //   for (let i = 0; i < productBrand.length; i++) {
+    //     // productBrand[i].product.id
+    //     let insertedProductBrand = new ProductBrand();
+    //     insertedProductBrand.brand = brand;
+    //     insertedProductBrand.product = productBrand[i].product;
+    //     await insertedProductBrand.save();
+    //   }
+    //   brand.completed = true;
+    //   await brand.save();
+    //   // return res.send({ productBrand });
+    // }
   }
   // scrapeWebsite(
   //   "https://www.barcodelookup.com/Cold-Sore-Treatment/1",
