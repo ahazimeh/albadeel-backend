@@ -126,10 +126,16 @@ app.post("/register", async (req, res) => {
     return res.json({ success: false, message: "an error has occured" });
   }
 });
+// @ts-ignore
 app.post("/insertProductAlternative", async (req, res) => {
-  const allBrands = await Brand.findBy({
-    brandSearch: { completed: false },
+  console.log(req);
+  const allBrands = await Brand.find({
+    where: { brandSearch: { completed: false } },
+    take: 10,
   });
+  if (1 == 1) {
+    return res.send({ allBrands });
+  }
   // return res.send({ allBrands });
   for (let j = 0; j < allBrands.length; j++) {
     // return res.send({ allBrands });
