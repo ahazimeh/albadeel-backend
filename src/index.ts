@@ -159,12 +159,12 @@ app.post("/insertProductAlternative", async (req, res) => {
       });
       console.log("zzzzzzz", findCompleted);
       if (!findCompleted) {
-        await scrapeBrand(
-          `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
-          brandId,
-          brandSearch[i].id
-          // "7up"
-        );
+        // await scrapeBrand(
+        //   `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
+        //   brandId,
+        //   brandSearch[i].id
+        //   // "7up"
+        // );
       } else {
         console.log("hii", findCompleted.id);
         const productBrandSearch = await ProductBrandSearch.find({
