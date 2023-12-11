@@ -40,6 +40,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const Product_1 = require("./entity/Product");
 const Alternative_1 = require("./entity/Alternative");
 const Brand_1 = require("./entity/Brand");
+const scrapWebsite_1 = require("./utils/scrapWebsite");
 const companies_1 = require("./companies");
 const ProductAlternative_1 = require("./entity/ProductAlternative");
 const typeorm_1 = require("typeorm");
@@ -125,7 +126,7 @@ app.post("/register", async (req, res) => {
     }
 });
 app.post("/insertProductAlternative", async (req, res) => {
-    var _a;
+    var _a, _b;
     console.log(req);
     const allBrands = await Brand_1.Brand.find({
         where: { brandSearch: { completed: false } },
@@ -147,6 +148,7 @@ app.post("/insertProductAlternative", async (req, res) => {
             });
             console.log("zzzzzzz", findCompleted);
             if (!findCompleted) {
+                await (0, scrapWebsite_1.scrapeBrand)(`https://www.barcodelookup.com/${(_b = brandSearch[i]) === null || _b === void 0 ? void 0 : _b.searchText}/1`, brandId, brandSearch[i].id);
             }
             else {
                 console.log("hii", findCompleted.id);
