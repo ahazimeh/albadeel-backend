@@ -81,7 +81,9 @@ export const scrapeWebsite = async (
   //   console.log(incrementLastNumberInUrl(url));
   // }, 5000);
   // return;
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    ignoreDefaultArgs: ["--disable-extensions"],
+  });
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0);
 
@@ -250,7 +252,9 @@ export const scrapeBrand = async (
   //   console.log(incrementLastNumberInUrl(url));
   // }, 5000);
   // return;
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    ignoreDefaultArgs: ["--disable-extensions"],
+  });
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0);
 

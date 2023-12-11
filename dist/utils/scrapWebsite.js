@@ -82,7 +82,9 @@ const scrapeWebsite = async (url, name) => {
     else {
         alternativeId = (alternativeProduct === null || alternativeProduct === void 0 ? void 0 : alternativeProduct.id) || -1;
     }
-    const browser = await puppeteer_extra_1.default.launch();
+    const browser = await puppeteer_extra_1.default.launch({
+        ignoreDefaultArgs: ["--disable-extensions"],
+    });
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(0);
     await page.goto(url);
@@ -188,7 +190,9 @@ async function insertIntoProductBrand(productId, brandId, brandSearchId) {
     }
 }
 const scrapeBrand = async (url, brandId, brandSearchId) => {
-    const browser = await puppeteer_extra_1.default.launch();
+    const browser = await puppeteer_extra_1.default.launch({
+        ignoreDefaultArgs: ["--disable-extensions"],
+    });
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(0);
     await page.goto(url);
