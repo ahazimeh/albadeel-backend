@@ -5,9 +5,10 @@ import {
   BaseEntity,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
-import { Brand } from "./Brand";
 import { Alternative } from "./Alternative";
+import { ProductAlternativeSearch } from "./ProductAlternativeSearch";
 
 @Entity()
 export class AlternativeSearch extends BaseEntity {
@@ -23,4 +24,10 @@ export class AlternativeSearch extends BaseEntity {
 
   @Column({ default: false })
   completed: boolean;
+
+  @OneToMany(
+    (type) => ProductAlternativeSearch,
+    (productAlternativeSearch) => productAlternativeSearch.alternative_search
+  )
+  productAlternativeSearch: ProductAlternativeSearch[];
 }

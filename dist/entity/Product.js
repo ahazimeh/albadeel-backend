@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const ProductAlternative_1 = require("./ProductAlternative");
 const ProductBrand_1 = require("./ProductBrand");
 const ProductBrandSearch_1 = require("./ProductBrandSearch");
+const ProductAlternativeSearch_1 = require("./ProductAlternativeSearch");
 let Product = class Product extends typeorm_1.BaseEntity {
 };
 exports.Product = Product;
@@ -57,6 +58,10 @@ __decorate([
     (0, typeorm_1.OneToMany)((type) => ProductBrandSearch_1.ProductBrandSearch, (productBrandSearch) => productBrandSearch.product),
     __metadata("design:type", Array)
 ], Product.prototype, "productBrandSearch", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)((type) => ProductAlternativeSearch_1.ProductAlternativeSearch, (productAlternativeSearch) => productAlternativeSearch.product),
+    __metadata("design:type", Array)
+], Product.prototype, "productAlternativeSearch", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)()
 ], Product);

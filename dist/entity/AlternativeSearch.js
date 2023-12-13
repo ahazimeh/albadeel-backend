@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlternativeSearch = void 0;
 const typeorm_1 = require("typeorm");
 const Alternative_1 = require("./Alternative");
+const ProductAlternativeSearch_1 = require("./ProductAlternativeSearch");
 let AlternativeSearch = class AlternativeSearch extends typeorm_1.BaseEntity {
 };
 exports.AlternativeSearch = AlternativeSearch;
@@ -32,6 +33,10 @@ __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], AlternativeSearch.prototype, "completed", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)((type) => ProductAlternativeSearch_1.ProductAlternativeSearch, (productAlternativeSearch) => productAlternativeSearch.alternative_search),
+    __metadata("design:type", Array)
+], AlternativeSearch.prototype, "productAlternativeSearch", void 0);
 exports.AlternativeSearch = AlternativeSearch = __decorate([
     (0, typeorm_1.Entity)()
 ], AlternativeSearch);

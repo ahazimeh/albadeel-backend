@@ -36,6 +36,8 @@ const ProductBrand_1 = require("../entity/ProductBrand");
 const Brand_1 = require("../entity/Brand");
 const BrandSearch_1 = require("../entity/BrandSearch");
 const ProductBrandSearch_1 = require("../entity/ProductBrandSearch");
+const ProductAlternativeSearch_1 = require("../entity/ProductAlternativeSearch");
+const AlternativeSearch_1 = require("../entity/AlternativeSearch");
 function incrementLastNumberInUrl(url) {
     let match = url.match(/\/(\d+)(?:\/)?$/);
     if (match && match[1]) {
@@ -53,7 +55,7 @@ function escapeSelector(text) {
 async function insertIntoProductAlternative(productId, alternativeId, alternativeSearchId) {
     const product = await Product_1.Product.findOneBy({ id: productId });
     const alternative = await Alternative_1.Alternative.findOneBy({ id: alternativeId });
-    const alternativeSearch = await BrandSearch_1.BrandSearch.findOneBy({
+    const alternativeSearch = await AlternativeSearch_1.AlternativeSearch.findOneBy({
         id: alternativeSearchId,
     });
     const productAlternative = new ProductAlternative_1.ProductAlternative();
@@ -70,6 +72,21 @@ async function insertIntoProductAlternative(productId, alternativeId, alternativ
         });
         if (!existingProductAlternative)
             await productAlternative.save();
+    }
+    const productAlternativeSearch = new ProductAlternativeSearch_1.ProductAlternativeSearch();
+    if (alternativeSearch)
+        productAlternativeSearch.alternative_search = alternativeSearch;
+    if (product)
+        productAlternativeSearch.product = product;
+    if (product && alternativeSearch) {
+        const existingProductAlternativeSearch = await ProductAlternativeSearch_1.ProductAlternativeSearch.findOne({
+            where: {
+                alternative_search: { id: alternativeSearchId },
+                product: { id: productId },
+            },
+        });
+        if (!existingProductAlternativeSearch)
+            await productAlternativeSearch.save();
     }
 }
 const scrapeWebsite = async (url, id, alternativeSearchId) => {

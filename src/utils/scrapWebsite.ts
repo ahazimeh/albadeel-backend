@@ -8,6 +8,8 @@ import { Brand } from "../entity/Brand";
 import { AppDataSource } from "../data-source";
 import { BrandSearch } from "../entity/BrandSearch";
 import { ProductBrandSearch } from "../entity/ProductBrandSearch";
+import { ProductAlternativeSearch } from "../entity/ProductAlternativeSearch";
+import { AlternativeSearch } from "../entity/AlternativeSearch";
 
 function incrementLastNumberInUrl(url: string) {
   // Match the last number in the URL using a regular expression
@@ -37,7 +39,7 @@ async function insertIntoProductAlternative(
   // Assuming you have product and alternative ids, you can insert into the join table like this
   const product = await Product.findOneBy({ id: productId });
   const alternative = await Alternative.findOneBy({ id: alternativeId });
-  const alternativeSearch = await BrandSearch.findOneBy({
+  const alternativeSearch = await AlternativeSearch.findOneBy({
     id: alternativeSearchId,
   });
 
@@ -53,6 +55,27 @@ async function insertIntoProductAlternative(
       },
     });
     if (!existingProductAlternative) await productAlternative.save();
+  }
+
+  const productAlternativeSearch = new ProductAlternativeSearch();
+  if (alternativeSearch)
+    productAlternativeSearch.alternative_search = alternativeSearch;
+
+  if (product) productAlternativeSearch.product = product;
+  if (product && alternativeSearch) {
+    const existingProductAlternativeSearch =
+      await ProductAlternativeSearch.findOne({
+        where: {
+          alternative_search: { id: alternativeSearchId },
+          product: { id: productId },
+        },
+        // where: {
+        //   brand: brand,
+        //   product: product,
+        // },
+      });
+    if (!existingProductAlternativeSearch)
+      await productAlternativeSearch.save();
   }
 }
 

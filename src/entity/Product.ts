@@ -12,6 +12,7 @@ import { Brand } from "./Brand";
 import { ProductAlternative } from "./ProductAlternative";
 import { ProductBrand } from "./ProductBrand";
 import { ProductBrandSearch } from "./ProductBrandSearch";
+import { ProductAlternativeSearch } from "./ProductAlternativeSearch";
 
 @Entity()
 export class Product extends BaseEntity {
@@ -50,4 +51,9 @@ export class Product extends BaseEntity {
     (productBrandSearch) => productBrandSearch.product
   )
   productBrandSearch: ProductBrandSearch[];
+  @OneToMany(
+    (type) => ProductAlternativeSearch,
+    (productAlternativeSearch) => productAlternativeSearch.product
+  )
+  productAlternativeSearch: ProductAlternativeSearch[];
 }

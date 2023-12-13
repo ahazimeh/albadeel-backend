@@ -9,6 +9,7 @@ import { ProductNotFound } from "./entity/ProductNotFound";
 import { BrandSearch } from "./entity/BrandSearch";
 import { ProductBrandSearch } from "./entity/ProductBrandSearch";
 import { AlternativeSearch } from "./entity/AlternativeSearch";
+import { ProductAlternativeSearch } from "./entity/ProductAlternativeSearch";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -34,6 +35,7 @@ export const AppDataSource = new DataSource({
     BrandSearch,
     ProductBrandSearch,
     AlternativeSearch,
+    ProductAlternativeSearch,
   ],
   subscribers: [],
   migrations: [],
