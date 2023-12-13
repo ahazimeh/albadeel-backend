@@ -26,6 +26,7 @@ import path from "path";
 import { BrandSearch } from "./entity/BrandSearch";
 import { ProductBrandSearch } from "./entity/ProductBrandSearch";
 import { comapniesCsv } from "./companiesCsv";
+import { AlternativeSearch } from "./entity/AlternativeSearch";
 
 var app = express();
 
@@ -125,6 +126,82 @@ app.post("/register", async (req, res) => {
   } catch (err) {
     return res.json({ success: false, message: "an error has occured" });
   }
+});
+app.get("/insertForTesting", async (req, res) => {
+  // const alternative = new Alternative();
+  // alternative.name = "7up";
+  // try {
+  //   await alternative.save();
+  // } catch (err) {}
+  const alternativeP = await Alternative.findOneBy({ id: 1 });
+  if (!alternativeP) return;
+  const alternativeSearch = new AlternativeSearch();
+  alternativeSearch.alternative = alternativeP;
+  alternativeSearch.url = "beverage";
+  await alternativeSearch.save();
+});
+app.post("/scrapKeywords", async (req, res) => {
+  const allAlternative = await Alternative.find({
+    where: { alternativeSearch: { completed: false } },
+  });
+  for (let j = 0; j < allAlternative.length; j++) {
+    let alternativeId = allAlternative[j].id;
+    const alternative = await Alternative.findOneBy({ id: alternativeId });
+    if (!alternative) {
+      continue;
+    }
+    const alternativeSearch = await AlternativeSearch.find({
+      where: { alternative: { id: alternativeId }, completed: false },
+    });
+
+    for (let i = 0; i < alternativeSearch.length; i++) {
+      const findCompleted = await AlternativeSearch.findOneBy({
+        completed: true,
+        url: alternativeSearch[i]?.url,
+      });
+      if (!findCompleted) {
+        await scrapeWebsite(
+          `https://www.barcodelookup.com/${alternativeSearch[i]?.url}/1`,
+          alternative.id,
+          alternativeSearch[i].id
+          // "7up"
+        );
+      } else {
+        // console.log("hii", findCompleted.id);
+        // const productBrandSearch = await ProductBrandSearch.find({
+        //   where: {
+        //     brand_search: { id: findCompleted.id },
+        //   },
+        //   relations: ["brand_search", "product"],
+        //   // relations: ["product", "brand"],
+        // });
+        // // return res.send({ productBrandSearch });
+        // for (let k = 0; k < productBrandSearch.length; k++) {
+        //   // productBrand[k].product.id
+        //   try {
+        //     let insertedProductBrandSearch = new ProductBrandSearch();
+        //     insertedProductBrandSearch.brand_search = brandSearch[i];
+        //     insertedProductBrandSearch.product = productBrandSearch[k].product;
+        //     await insertedProductBrandSearch.save();
+        //   } catch (err) {}
+        //   try {
+        //     let insertedProductBrand = new ProductBrand();
+        //     insertedProductBrand.brand = brand;
+        //     insertedProductBrand.product = productBrandSearch[k].product;
+        //     await insertedProductBrand.save();
+        //   } catch (err) {}
+        // }
+        // brandSearch[i].completed = true;
+        // await brandSearch[i].save();
+        // // brand.completed = true;
+        // // await brand.save();
+        // // return res.send({ productBrand });
+      }
+    }
+    // return res.send({ alternativeSearch });
+  }
+  // await scrapeWebsite("https://www.barcodelookup.com/beverage/1", "7up");
+  res.send({ success: true });
 });
 app.post("/insertProductAlternative", async (req, res) => {
   console.log(req);

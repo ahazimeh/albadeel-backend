@@ -11,6 +11,7 @@ const ProductBrand_1 = require("./entity/ProductBrand");
 const ProductNotFound_1 = require("./entity/ProductNotFound");
 const BrandSearch_1 = require("./entity/BrandSearch");
 const ProductBrandSearch_1 = require("./entity/ProductBrandSearch");
+const AlternativeSearch_1 = require("./entity/AlternativeSearch");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mysql",
     host: "localhost",
@@ -32,6 +33,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
         ProductNotFound_1.ProductNotFound,
         BrandSearch_1.BrandSearch,
         ProductBrandSearch_1.ProductBrandSearch,
+        AlternativeSearch_1.AlternativeSearch,
     ],
     subscribers: [],
     migrations: [],

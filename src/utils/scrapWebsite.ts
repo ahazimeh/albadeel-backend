@@ -31,44 +31,49 @@ function escapeSelector(text: string) {
 
 async function insertIntoProductAlternative(
   productId: number,
-  alternativeId: number
+  alternativeId: number,
+  alternativeSearchId: number
 ): Promise<void> {
   // Assuming you have product and alternative ids, you can insert into the join table like this
   const product = await Product.findOneBy({ id: productId });
   const alternative = await Alternative.findOneBy({ id: alternativeId });
+  const alternativeSearch = await BrandSearch.findOneBy({
+    id: alternativeSearchId,
+  });
 
   const productAlternative = new ProductAlternative();
   if (alternative) productAlternative.alternative = alternative;
 
   if (product) productAlternative.product = product;
   if (product && alternative) {
-    const existingProductBrand = await ProductAlternative.findOne({
+    const existingProductAlternative = await ProductAlternative.findOne({
       where: {
         alternative: { id: alternativeId },
         product: { id: productId },
       },
     });
-    if (!existingProductBrand) await productAlternative.save();
+    if (!existingProductAlternative) await productAlternative.save();
   }
 }
 
 export const scrapeWebsite = async (
   url: string,
-  name: string
-  // alternative: string
+  id: number,
+  alternativeSearchId: number
 ) => {
   const lastUrlCount = url.split("/")[url.split("/").length - 1];
-  const alternativeProduct = await Alternative.findOneBy({ name });
+  // const alternativeProduct = await Alternative.findOneBy({ id });
 
-  const alternativeP = new Alternative();
-  let alternativeId = -1;
-  if (!alternativeProduct) {
-    alternativeP.name = name;
-    await alternativeP.save();
-    alternativeId = alternativeP.id;
-  } else {
-    alternativeId = alternativeProduct?.id || -1;
-  }
+  // const alternativeP = new Alternative();
+  // let alternativeId = -1;
+  // if (!alternativeProduct) {
+  //   alternativeP.name = name;
+  //   await alternativeP.save();
+  //   alternativeId = alternativeP.id;
+  // } else {
+  // alternativeId = alternativeProduct?.id || -1;
+  // }
+  let alternativeId = id;
 
   // setTimeout(() => {
   //   if (+lastUrlCount === 1) {
@@ -141,14 +146,22 @@ export const scrapeWebsite = async (
       .then((res) => {
         if (res) {
           console.log("asdasdsad", res.id);
-          insertIntoProductAlternative(res.id, alternativeId);
+          insertIntoProductAlternative(
+            res.id,
+            alternativeId,
+            alternativeSearchId
+          );
           // insert here using res.id & alternativeId
         } else {
           product
             .save()
             .then((res) => {
               console.log("bbbbbbbbbbb", res);
-              insertIntoProductAlternative(res.id, alternativeId);
+              insertIntoProductAlternative(
+                res.id,
+                alternativeId,
+                alternativeSearchId
+              );
               // insert here using res.id & alternativeId
             })
             .catch((err) => {});

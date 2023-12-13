@@ -50,38 +50,31 @@ function incrementLastNumberInUrl(url) {
 function escapeSelector(text) {
     return text.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
 }
-async function insertIntoProductAlternative(productId, alternativeId) {
+async function insertIntoProductAlternative(productId, alternativeId, alternativeSearchId) {
     const product = await Product_1.Product.findOneBy({ id: productId });
     const alternative = await Alternative_1.Alternative.findOneBy({ id: alternativeId });
+    const alternativeSearch = await BrandSearch_1.BrandSearch.findOneBy({
+        id: alternativeSearchId,
+    });
     const productAlternative = new ProductAlternative_1.ProductAlternative();
     if (alternative)
         productAlternative.alternative = alternative;
     if (product)
         productAlternative.product = product;
     if (product && alternative) {
-        const existingProductBrand = await ProductAlternative_1.ProductAlternative.findOne({
+        const existingProductAlternative = await ProductAlternative_1.ProductAlternative.findOne({
             where: {
                 alternative: { id: alternativeId },
                 product: { id: productId },
             },
         });
-        if (!existingProductBrand)
+        if (!existingProductAlternative)
             await productAlternative.save();
     }
 }
-const scrapeWebsite = async (url, name) => {
+const scrapeWebsite = async (url, id, alternativeSearchId) => {
     const lastUrlCount = url.split("/")[url.split("/").length - 1];
-    const alternativeProduct = await Alternative_1.Alternative.findOneBy({ name });
-    const alternativeP = new Alternative_1.Alternative();
-    let alternativeId = -1;
-    if (!alternativeProduct) {
-        alternativeP.name = name;
-        await alternativeP.save();
-        alternativeId = alternativeP.id;
-    }
-    else {
-        alternativeId = (alternativeProduct === null || alternativeProduct === void 0 ? void 0 : alternativeProduct.id) || -1;
-    }
+    let alternativeId = id;
     const browser = await puppeteer_extra_1.default.launch({
         ignoreDefaultArgs: ["--disable-extensions"],
     });
@@ -133,14 +126,14 @@ const scrapeWebsite = async (url, name) => {
             .then((res) => {
             if (res) {
                 console.log("asdasdsad", res.id);
-                insertIntoProductAlternative(res.id, alternativeId);
+                insertIntoProductAlternative(res.id, alternativeId, alternativeSearchId);
             }
             else {
                 product
                     .save()
                     .then((res) => {
                     console.log("bbbbbbbbbbb", res);
-                    insertIntoProductAlternative(res.id, alternativeId);
+                    insertIntoProductAlternative(res.id, alternativeId, alternativeSearchId);
                 })
                     .catch((err) => { });
             }

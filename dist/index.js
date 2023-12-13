@@ -51,6 +51,7 @@ const fs_1 = __importDefault(require("fs"));
 const BrandSearch_1 = require("./entity/BrandSearch");
 const ProductBrandSearch_1 = require("./entity/ProductBrandSearch");
 const companiesCsv_1 = require("./companiesCsv");
+const AlternativeSearch_1 = require("./entity/AlternativeSearch");
 var app = (0, express_1.default)();
 var jsonParser = body_parser_1.default.json();
 var urlencodedParser = body_parser_1.default.urlencoded({ extended: false });
@@ -124,6 +125,43 @@ app.post("/register", async (req, res) => {
     catch (err) {
         return res.json({ success: false, message: "an error has occured" });
     }
+});
+app.get("/insertForTesting", async (req, res) => {
+    const alternativeP = await Alternative_1.Alternative.findOneBy({ id: 1 });
+    if (!alternativeP)
+        return;
+    const alternativeSearch = new AlternativeSearch_1.AlternativeSearch();
+    alternativeSearch.alternative = alternativeP;
+    alternativeSearch.url = "beverage";
+    await alternativeSearch.save();
+});
+app.post("/scrapKeywords", async (req, res) => {
+    var _a, _b;
+    const allAlternative = await Alternative_1.Alternative.find({
+        where: { alternativeSearch: { completed: false } },
+    });
+    for (let j = 0; j < allAlternative.length; j++) {
+        let alternativeId = allAlternative[j].id;
+        const alternative = await Alternative_1.Alternative.findOneBy({ id: alternativeId });
+        if (!alternative) {
+            continue;
+        }
+        const alternativeSearch = await AlternativeSearch_1.AlternativeSearch.find({
+            where: { alternative: { id: alternativeId }, completed: false },
+        });
+        for (let i = 0; i < alternativeSearch.length; i++) {
+            const findCompleted = await AlternativeSearch_1.AlternativeSearch.findOneBy({
+                completed: true,
+                url: (_a = alternativeSearch[i]) === null || _a === void 0 ? void 0 : _a.url,
+            });
+            if (!findCompleted) {
+                await (0, scrapWebsite_1.scrapeWebsite)(`https://www.barcodelookup.com/${(_b = alternativeSearch[i]) === null || _b === void 0 ? void 0 : _b.url}/1`, alternative.id, alternativeSearch[i].id);
+            }
+            else {
+            }
+        }
+    }
+    res.send({ success: true });
 });
 app.post("/insertProductAlternative", async (req, res) => {
     var _a, _b;

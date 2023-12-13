@@ -9,30 +9,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Alternative = void 0;
+exports.AlternativeSearch = void 0;
 const typeorm_1 = require("typeorm");
-const ProductAlternative_1 = require("./ProductAlternative");
-const AlternativeSearch_1 = require("./AlternativeSearch");
-let Alternative = class Alternative extends typeorm_1.BaseEntity {
+const Alternative_1 = require("./Alternative");
+let AlternativeSearch = class AlternativeSearch extends typeorm_1.BaseEntity {
 };
-exports.Alternative = Alternative;
+exports.AlternativeSearch = AlternativeSearch;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Alternative.prototype, "id", void 0);
+], AlternativeSearch.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true }),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], Alternative.prototype, "name", void 0);
+], AlternativeSearch.prototype, "url", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)((type) => ProductAlternative_1.ProductAlternative, (productAlternative) => productAlternative.alternative),
-    __metadata("design:type", Array)
-], Alternative.prototype, "productAlternative", void 0);
+    (0, typeorm_1.ManyToOne)(() => Alternative_1.Alternative, (alternative) => alternative.id),
+    (0, typeorm_1.JoinColumn)({ name: "alternative_search_id" }),
+    __metadata("design:type", Alternative_1.Alternative)
+], AlternativeSearch.prototype, "alternative", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)((type) => AlternativeSearch_1.AlternativeSearch, (alternativeSearch) => alternativeSearch.alternative),
-    __metadata("design:type", Array)
-], Alternative.prototype, "alternativeSearch", void 0);
-exports.Alternative = Alternative = __decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], AlternativeSearch.prototype, "completed", void 0);
+exports.AlternativeSearch = AlternativeSearch = __decorate([
     (0, typeorm_1.Entity)()
-], Alternative);
-//# sourceMappingURL=Alternative.js.map
+], AlternativeSearch);
+//# sourceMappingURL=AlternativeSearch.js.map
