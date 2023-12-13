@@ -201,9 +201,16 @@ export const scrapeWebsite = async (
     // console.log("thirdTag", thirdTag);
     // console.log("kkk", a);
   });
-  const linkExists =
-    $('a[href="https://www.barcodelookup.com/7up/2"]').length > 0;
+  const linkExists = $(`a[href="${incrementLastNumberInUrl(url)}"]`).length > 0;
   console.log("asdas", linkExists);
+  if (linkExists) {
+    await scrapeWebsite(incrementLastNumberInUrl(url), id, alternativeSearchId);
+  } else {
+    await AlternativeSearch.save({
+      id: alternativeSearchId,
+      completed: true,
+    });
+  }
 
   // You can now do something with the HTML content, such as saving it to a file or processing it further
   // console.log(htmlContent);

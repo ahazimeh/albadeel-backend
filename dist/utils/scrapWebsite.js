@@ -161,8 +161,17 @@ const scrapeWebsite = async (url, id, alternativeSearchId) => {
         }
         catch (err) { }
     });
-    const linkExists = $('a[href="https://www.barcodelookup.com/7up/2"]').length > 0;
+    const linkExists = $(`a[href="${incrementLastNumberInUrl(url)}"]`).length > 0;
     console.log("asdas", linkExists);
+    if (linkExists) {
+        await (0, exports.scrapeWebsite)(incrementLastNumberInUrl(url), id, alternativeSearchId);
+    }
+    else {
+        await AlternativeSearch_1.AlternativeSearch.save({
+            id: alternativeSearchId,
+            completed: true,
+        });
+    }
     await browser.close();
 };
 exports.scrapeWebsite = scrapeWebsite;
