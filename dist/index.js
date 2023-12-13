@@ -52,6 +52,7 @@ const BrandSearch_1 = require("./entity/BrandSearch");
 const ProductBrandSearch_1 = require("./entity/ProductBrandSearch");
 const companiesCsv_1 = require("./companiesCsv");
 const AlternativeSearch_1 = require("./entity/AlternativeSearch");
+const ProductAlternativeSearch_1 = require("./entity/ProductAlternativeSearch");
 var app = (0, express_1.default)();
 var jsonParser = body_parser_1.default.json();
 var urlencodedParser = body_parser_1.default.urlencoded({ extended: false });
@@ -158,6 +159,34 @@ app.post("/scrapKeywords", async (req, res) => {
                 await (0, scrapWebsite_1.scrapeWebsite)(`https://www.barcodelookup.com/${(_b = alternativeSearch[i]) === null || _b === void 0 ? void 0 : _b.url}/1`, alternative.id, alternativeSearch[i].id);
             }
             else {
+                console.log("hii", findCompleted.id);
+                const productAlternativeSearch = await ProductAlternativeSearch_1.ProductAlternativeSearch.find({
+                    where: {
+                        alternative_search: { id: findCompleted.id },
+                    },
+                    relations: ["alternative_search", "product"],
+                });
+                for (let k = 0; k < productAlternativeSearch.length; k++) {
+                    try {
+                        let insertedProductAlternativeSearch = new ProductAlternativeSearch_1.ProductAlternativeSearch();
+                        insertedProductAlternativeSearch.alternative_search =
+                            alternativeSearch[i];
+                        insertedProductAlternativeSearch.product =
+                            productAlternativeSearch[k].product;
+                        await insertedProductAlternativeSearch.save();
+                    }
+                    catch (err) { }
+                    try {
+                        let insertedProductAlternative = new ProductAlternative_1.ProductAlternative();
+                        insertedProductAlternative.alternative = alternative;
+                        insertedProductAlternative.product =
+                            productAlternativeSearch[k].product;
+                        await insertedProductAlternative.save();
+                    }
+                    catch (err) { }
+                }
+                alternativeSearch[i].completed = true;
+                await alternativeSearch[i].save();
             }
         }
     }

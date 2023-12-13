@@ -27,6 +27,7 @@ import { BrandSearch } from "./entity/BrandSearch";
 import { ProductBrandSearch } from "./entity/ProductBrandSearch";
 import { comapniesCsv } from "./companiesCsv";
 import { AlternativeSearch } from "./entity/AlternativeSearch";
+import { ProductAlternativeSearch } from "./entity/ProductAlternativeSearch";
 
 var app = express();
 
@@ -167,35 +168,39 @@ app.post("/scrapKeywords", async (req, res) => {
           // "7up"
         );
       } else {
-        // console.log("hii", findCompleted.id);
-        // const productBrandSearch = await ProductBrandSearch.find({
-        //   where: {
-        //     brand_search: { id: findCompleted.id },
-        //   },
-        //   relations: ["brand_search", "product"],
-        //   // relations: ["product", "brand"],
-        // });
-        // // return res.send({ productBrandSearch });
-        // for (let k = 0; k < productBrandSearch.length; k++) {
-        //   // productBrand[k].product.id
-        //   try {
-        //     let insertedProductBrandSearch = new ProductBrandSearch();
-        //     insertedProductBrandSearch.brand_search = brandSearch[i];
-        //     insertedProductBrandSearch.product = productBrandSearch[k].product;
-        //     await insertedProductBrandSearch.save();
-        //   } catch (err) {}
-        //   try {
-        //     let insertedProductBrand = new ProductBrand();
-        //     insertedProductBrand.brand = brand;
-        //     insertedProductBrand.product = productBrandSearch[k].product;
-        //     await insertedProductBrand.save();
-        //   } catch (err) {}
-        // }
-        // brandSearch[i].completed = true;
-        // await brandSearch[i].save();
-        // // brand.completed = true;
-        // // await brand.save();
-        // // return res.send({ productBrand });
+        console.log("hii", findCompleted.id);
+        const productAlternativeSearch = await ProductAlternativeSearch.find({
+          where: {
+            alternative_search: { id: findCompleted.id },
+          },
+          relations: ["alternative_search", "product"],
+          // relations: ["product", "brand"],
+        });
+        // return res.send({ productBrandSearch });
+        for (let k = 0; k < productAlternativeSearch.length; k++) {
+          // productBrand[k].product.id
+          try {
+            let insertedProductAlternativeSearch =
+              new ProductAlternativeSearch();
+            insertedProductAlternativeSearch.alternative_search =
+              alternativeSearch[i];
+            insertedProductAlternativeSearch.product =
+              productAlternativeSearch[k].product;
+            await insertedProductAlternativeSearch.save();
+          } catch (err) {}
+          try {
+            let insertedProductAlternative = new ProductAlternative();
+            insertedProductAlternative.alternative = alternative;
+            insertedProductAlternative.product =
+              productAlternativeSearch[k].product;
+            await insertedProductAlternative.save();
+          } catch (err) {}
+        }
+        alternativeSearch[i].completed = true;
+        await alternativeSearch[i].save();
+        // brand.completed = true;
+        // await brand.save();
+        // return res.send({ productBrand });
       }
     }
     // return res.send({ alternativeSearch });
