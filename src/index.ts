@@ -503,6 +503,6 @@ app.get("/insertKeywords", async (req, res, next) => {
   }
 });
 
-app.listen(process.env.PORT || 4000, () => {
-  console.log("server started on localhost:4000");
+app.listen(process.env.PORT || 3000, () => {
+  console.log("server started on localhost:3000");
 });
