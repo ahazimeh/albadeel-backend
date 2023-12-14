@@ -56,6 +56,7 @@ const ProductAlternativeSearch_1 = require("./entity/ProductAlternativeSearch");
 var app = (0, express_1.default)();
 var jsonParser = body_parser_1.default.json();
 var urlencodedParser = body_parser_1.default.urlencoded({ extended: false });
+app.use(urlencodedParser);
 app.use(jsonParser);
 puppeteer_extra_1.default.use((0, puppeteer_extra_plugin_stealth_1.default)());
 let a;
@@ -298,6 +299,7 @@ app.get("/insertIntoProductNotFound", async (req, res) => {
     }
 });
 app.post("/storeBrands", async (req, res) => {
+    return res.send({ sucess: false });
     for (let i = 0; i < companies_1.comapnies.length; i++) {
         const brand = new Brand_1.Brand();
         brand.name = companies_1.comapnies[i];

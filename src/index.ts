@@ -36,6 +36,7 @@ var jsonParser = bodyParser.json();
 
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+app.use(urlencodedParser);
 app.use(jsonParser);
 
 puppeteer.use(StealthPlugin());
