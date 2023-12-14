@@ -252,6 +252,7 @@ app.get("/insertProductAlternative", async (req, res) => {
             );
           } catch (err) {
             return res.send({
+              err,
               message: "an error has occured when calling scrapeBrand",
             });
           }
