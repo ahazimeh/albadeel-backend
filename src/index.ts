@@ -213,7 +213,7 @@ app.post("/insertProductAlternative", async (req, res) => {
   console.log(req);
   const allBrands = await Brand.find({
     where: { brandSearch: { completed: false } },
-    take: 10,
+    // take: 10,
   });
   // return res.send({ allBrands });
   for (let j = 0; j < allBrands.length; j++) {
