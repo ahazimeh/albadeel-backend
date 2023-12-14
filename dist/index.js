@@ -299,7 +299,6 @@ app.get("/insertIntoProductNotFound", async (req, res) => {
     }
 });
 app.post("/storeBrands", async (req, res) => {
-    return res.send({ sucess: false });
     for (let i = 0; i < companies_1.comapnies.length; i++) {
         const brand = new Brand_1.Brand();
         brand.name = companies_1.comapnies[i];
@@ -400,6 +399,12 @@ app.get("/insertKeywords", async (req, res, next) => {
             brandSearch.save();
         }
     }
+});
+app.get("/getRequest", (req, res, next) => {
+    return res.send({ success: true });
+});
+app.post("/postRequest", (req, res, next) => {
+    return res.send({ success: true });
 });
 app.listen(process.env.PORT || 3000, () => {
     console.log("server started on localhost:3000");
