@@ -380,7 +380,6 @@ app.get("/insertIntoProductNotFound", async (req, res) => {
 });
 
 app.post("/storeBrands", async (req, res) => {
-  return res.send({ sucess: false });
   for (let i = 0; i < comapnies.length; i++) {
     const brand = new Brand();
     brand.name = comapnies[i];
