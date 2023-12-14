@@ -317,7 +317,7 @@ app.post("/insertProductAlternative", async (req, res) => {
   } catch (err) {
     return res.send({ err });
   }
-  res.send("hii");
+  return res.send("hii");
 });
 
 app.get("/getProduct/:barcode", async (req, res) => {
