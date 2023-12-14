@@ -211,107 +211,112 @@ app.post("/scrapKeywords", async (req, res) => {
 });
 app.post("/insertProductAlternative", async (req, res) => {
   console.log(req);
-  const allBrands = await Brand.find({
-    where: { brandSearch: { completed: false } },
-    // take: 10,
-  });
-  // return res.send({ allBrands });
-  for (let j = 0; j < allBrands.length; j++) {
-    // return res.send({ allBrands });
-    let brandId = allBrands[j].id;
-    const brand = await Brand.findOneBy({ id: brandId });
-    if (!brand) {
-      continue;
-    }
-    const brandSearch = await BrandSearch.find({
-      where: { brand: { id: brandId }, completed: false },
+  try {
+    const allBrands = await Brand.find({
+      where: { brandSearch: { completed: false } },
+      // take: 10,
     });
-    // return res.send({ brandSearch });
-    // for(let i =0;i<brandSearch.length;i++) {
-    //   if(brandSearch.)
-    // }
-    // if (brand?.completed) {
-    //   continue;
-    //   // return res.send({ success: false, brand: brand });
-    // }
-    // if (!findCompleted)
-    for (let i = 0; i < brandSearch.length; i++) {
-      const findCompleted = await BrandSearch.findOneBy({
-        completed: true,
-        searchText: brandSearch[i]?.searchText,
-      });
-      console.log("zzzzzzz", findCompleted);
-      if (!findCompleted) {
-        await scrapeBrand(
-          `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
-          brandId,
-          brandSearch[i].id
-          // "7up"
-        );
-      } else {
-        console.log("hii", findCompleted.id);
-        const productBrandSearch = await ProductBrandSearch.find({
-          where: {
-            brand_search: { id: findCompleted.id },
-          },
-          relations: ["brand_search", "product"],
-          // relations: ["product", "brand"],
-        });
-        // return res.send({ productBrandSearch });
-        for (let k = 0; k < productBrandSearch.length; k++) {
-          // productBrand[k].product.id
-          try {
-            let insertedProductBrandSearch = new ProductBrandSearch();
-            insertedProductBrandSearch.brand_search = brandSearch[i];
-            insertedProductBrandSearch.product = productBrandSearch[k].product;
-            await insertedProductBrandSearch.save();
-          } catch (err) {}
-
-          try {
-            let insertedProductBrand = new ProductBrand();
-            insertedProductBrand.brand = brand;
-            insertedProductBrand.product = productBrandSearch[k].product;
-            await insertedProductBrand.save();
-          } catch (err) {}
-        }
-        brandSearch[i].completed = true;
-        await brandSearch[i].save();
-        // brand.completed = true;
-        // await brand.save();
-        // return res.send({ productBrand });
+    // return res.send({ allBrands });
+    for (let j = 0; j < allBrands.length; j++) {
+      // return res.send({ allBrands });
+      let brandId = allBrands[j].id;
+      const brand = await Brand.findOneBy({ id: brandId });
+      if (!brand) {
+        continue;
       }
+      const brandSearch = await BrandSearch.find({
+        where: { brand: { id: brandId }, completed: false },
+      });
+      // return res.send({ brandSearch });
+      // for(let i =0;i<brandSearch.length;i++) {
+      //   if(brandSearch.)
+      // }
+      // if (brand?.completed) {
+      //   continue;
+      //   // return res.send({ success: false, brand: brand });
+      // }
+      // if (!findCompleted)
+      for (let i = 0; i < brandSearch.length; i++) {
+        const findCompleted = await BrandSearch.findOneBy({
+          completed: true,
+          searchText: brandSearch[i]?.searchText,
+        });
+        console.log("zzzzzzz", findCompleted);
+        if (!findCompleted) {
+          await scrapeBrand(
+            `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
+            brandId,
+            brandSearch[i].id
+            // "7up"
+          );
+        } else {
+          console.log("hii", findCompleted.id);
+          const productBrandSearch = await ProductBrandSearch.find({
+            where: {
+              brand_search: { id: findCompleted.id },
+            },
+            relations: ["brand_search", "product"],
+            // relations: ["product", "brand"],
+          });
+          // return res.send({ productBrandSearch });
+          for (let k = 0; k < productBrandSearch.length; k++) {
+            // productBrand[k].product.id
+            try {
+              let insertedProductBrandSearch = new ProductBrandSearch();
+              insertedProductBrandSearch.brand_search = brandSearch[i];
+              insertedProductBrandSearch.product =
+                productBrandSearch[k].product;
+              await insertedProductBrandSearch.save();
+            } catch (err) {}
+
+            try {
+              let insertedProductBrand = new ProductBrand();
+              insertedProductBrand.brand = brand;
+              insertedProductBrand.product = productBrandSearch[k].product;
+              await insertedProductBrand.save();
+            } catch (err) {}
+          }
+          brandSearch[i].completed = true;
+          await brandSearch[i].save();
+          // brand.completed = true;
+          // await brand.save();
+          // return res.send({ productBrand });
+        }
+      }
+      // else {
+      //   console.log("hii", findCompleted.id);
+      //   const productBrand = await ProductBrand.find({
+      //     where: {
+      //       brand: { id: findCompleted.id },
+      //     },
+      //     relations: ["brand", "product"],
+      //     // relations: ["product", "brand"],
+      //   });
+      //   for (let i = 0; i < productBrand.length; i++) {
+      //     // productBrand[i].product.id
+      //     let insertedProductBrand = new ProductBrand();
+      //     insertedProductBrand.brand = brand;
+      //     insertedProductBrand.product = productBrand[i].product;
+      //     await insertedProductBrand.save();
+      //   }
+      //   brand.completed = true;
+      //   await brand.save();
+      //   // return res.send({ productBrand });
+      // }
     }
-    // else {
-    //   console.log("hii", findCompleted.id);
-    //   const productBrand = await ProductBrand.find({
-    //     where: {
-    //       brand: { id: findCompleted.id },
-    //     },
-    //     relations: ["brand", "product"],
-    //     // relations: ["product", "brand"],
-    //   });
-    //   for (let i = 0; i < productBrand.length; i++) {
-    //     // productBrand[i].product.id
-    //     let insertedProductBrand = new ProductBrand();
-    //     insertedProductBrand.brand = brand;
-    //     insertedProductBrand.product = productBrand[i].product;
-    //     await insertedProductBrand.save();
-    //   }
-    //   brand.completed = true;
-    //   await brand.save();
-    //   // return res.send({ productBrand });
-    // }
+    // scrapeWebsite(
+    //   "https://www.barcodelookup.com/Cold-Sore-Treatment/1",
+    //   "7up"
+    //   // "7up"
+    // );
+    // scrapeWebsite(
+    //   "https://www.barcodelookup.com/beverage/1",
+    //   "7up"
+    //   // "7up"
+    // );
+  } catch (err) {
+    return res.send({ err });
   }
-  // scrapeWebsite(
-  //   "https://www.barcodelookup.com/Cold-Sore-Treatment/1",
-  //   "7up"
-  //   // "7up"
-  // );
-  // scrapeWebsite(
-  //   "https://www.barcodelookup.com/beverage/1",
-  //   "7up"
-  //   // "7up"
-  // );
   res.send("hii");
 });
 
