@@ -298,7 +298,6 @@ export const scrapeBrand = async (
   const browser = await puppeteer.launch({
     ignoreDefaultArgs: ["--disable-extensions"],
   });
-  return;
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0);
 
