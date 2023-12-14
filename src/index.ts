@@ -243,12 +243,18 @@ app.post("/insertProductAlternative", async (req, res) => {
         });
         console.log("zzzzzzz", findCompleted);
         if (!findCompleted) {
-          await scrapeBrand(
-            `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
-            brandId,
-            brandSearch[i].id
-            // "7up"
-          );
+          try {
+            await scrapeBrand(
+              `https://www.barcodelookup.com/${brandSearch[i]?.searchText}/1`,
+              brandId,
+              brandSearch[i].id
+              // "7up"
+            );
+          } catch (err) {
+            return res.send({
+              message: "an error has occured when calling scrapeBrand",
+            });
+          }
         } else {
           console.log("hii", findCompleted.id);
           const productBrandSearch = await ProductBrandSearch.find({
