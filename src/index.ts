@@ -504,6 +504,13 @@ app.get("/insertKeywords", async (req, res, next) => {
   }
 });
 
+app.get("/getRequest", (req, res, next) => {
+  return res.send({ success: true });
+});
+app.post("/postRequest", (req, res, next) => {
+  return res.send({ success: true });
+});
+
 app.listen(process.env.PORT || 3000, () => {
   console.log("server started on localhost:3000");
 });
