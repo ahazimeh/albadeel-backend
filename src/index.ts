@@ -507,6 +507,7 @@ app.get("/insertKeywords", async (req, res, next) => {
 app.get("/getRequest", (req, res, next) => {
   return res.send({ success: true });
 });
+console.log("asdjaskl");
 app.post("/postRequest", (req, res, next) => {
   return res.send({ success: true });
 });
