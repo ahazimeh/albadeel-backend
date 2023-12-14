@@ -209,7 +209,7 @@ app.post("/scrapKeywords", async (req, res) => {
   // await scrapeWebsite("https://www.barcodelookup.com/beverage/1", "7up");
   res.send({ success: true });
 });
-app.post("/insertProductAlternative", async (req, res) => {
+app.get("/insertProductAlternative", async (req, res) => {
   console.log(req);
   try {
     const allBrands = await Brand.find({
