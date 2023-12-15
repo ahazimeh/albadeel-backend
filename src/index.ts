@@ -524,6 +524,17 @@ app.post("/postRequest", (req, res, next) => {
   return res.send({ success: true });
 });
 
+app.get("/testPuppeteer", async (req, res, next) => {
+  try {
+    const browser = await puppeteer.launch({
+      ignoreDefaultArgs: ["--disable-extensions"],
+    });
+  } catch (err) {
+    return res.send({ success: false, message: "an error has occured" });
+  }
+  return res.send({ success: true });
+});
+
 app.listen(process.env.PORT || 3000, () => {
   console.log("server started on localhost:3000");
 });
