@@ -1471,11 +1471,6 @@ export const comapniesCsv = [
     Keywords: "Mcdonalds, Fast Food",
   },
   {
-    Company: "McDonald's",
-    Category: "Food and Beverage",
-    Keywords: "McDonald's, Fast Food",
-  },
-  {
     Company: "Monday.com",
     Category: "Technology",
     Keywords: "Monday.com, Project Management",
@@ -1552,11 +1547,6 @@ export const comapniesCsv = [
     Company: "National Geographic",
     Category: "Media",
     Keywords: "National Geographic, Magazine",
-  },
-  {
-    Company: "Natural Beauty Care",
-    Category: "Beauty",
-    Keywords: "Natural Beauty Care, Cosmetics",
   },
   {
     Company: "Natural Beauty Care",
@@ -1694,7 +1684,6 @@ export const comapniesCsv = [
   { Company: "Oral-B", Category: "Health", Keywords: "Oral-B, oral care" },
   { Company: "Oracle", Category: "Technology", Keywords: "Oracle, software" },
   { Company: "oricins", Category: "Beauty", Keywords: "oricins, skincare" },
-  { Company: "oral-b", Category: "Health", Keywords: "oral-b, oral care" },
   { Company: "orkid", Category: "Beauty", Keywords: "orkid, skincare" },
   { Company: "Orbit", Category: "Food and Beverage", Keywords: "Orbit, gum" },
   {
@@ -2106,11 +2095,6 @@ export const comapniesCsv = [
     Keywords: "Hair Care, Styling",
   },
   {
-    Company: "sodastream",
-    Category: "Beverage",
-    Keywords: "Sparkling Water, DIY",
-  },
-  {
     Company: "Somat",
     Category: "Household",
     Keywords: "Dishwashing, Cleaning",
@@ -2119,11 +2103,6 @@ export const comapniesCsv = [
     Company: "Soprole",
     Category: "Food and Beverage",
     Keywords: "Dairy, Milk",
-  },
-  {
-    Company: "Soprole",
-    Category: "Food and Beverage",
-    Keywords: "Dairy, Nutrition",
   },
   {
     Company: "Spotify",
@@ -2145,11 +2124,6 @@ export const comapniesCsv = [
   },
   {
     Company: "Star bucks",
-    Category: "Food and Beverage",
-    Keywords: "Coffee, Retail",
-  },
-  {
-    Company: "Starbucks coffee",
     Category: "Food and Beverage",
     Keywords: "Coffee, Retail",
   },
@@ -2402,11 +2376,6 @@ export const comapniesCsv = [
     Keywords: "Dairy-free, Ice cream",
   },
   {
-    Company: "Turtle Mountain Dairy Free",
-    Category: "Food and Beverage",
-    Keywords: "Dairy-free, Ice cream",
-  },
-  {
     Company: "TWIX",
     Category: "Food and Beverage",
     Keywords: "Chocolate, Candy",
@@ -2436,11 +2405,6 @@ export const comapniesCsv = [
     Company: "vanish",
     Category: "Household",
     Keywords: "Stain remover, Laundry",
-  },
-  {
-    Company: "Vaseline",
-    Category: "Beauty",
-    Keywords: "Skincare, Petroleum jelly",
   },
   {
     Company: "Valentino",

@@ -6,12 +6,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Index,
 } from "typeorm";
 import { ProductBrand } from "./ProductBrand";
 import { Brand } from "./Brand";
 import { ProductBrandSearch } from "./ProductBrandSearch";
 
 @Entity()
+@Index(["brand", "searchText"], { unique: true })
 export class BrandSearch extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
