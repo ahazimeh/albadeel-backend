@@ -344,6 +344,21 @@ app.get("/getAlternativeId", async (req, res) => {
         message: "could not find alternatives for this product",
     });
 });
+app.get("/getAlternativeBrand", async (req, res) => {
+    const productBrand = await ProductBrand_1.ProductBrand.find({
+        where: [
+            {
+                brand: {
+                    id: req.query.id,
+                },
+            },
+        ],
+        skip: (req.query.page - 1) * 10,
+        take: 10,
+        relations: ["product"],
+    });
+    return res.send({ productBrand });
+});
 app.get("/getAlternative", async (req, res) => {
     const brandSearch = await BrandSearch_1.BrandSearch.find({
         where: {
@@ -358,6 +373,7 @@ app.get("/getAlternative", async (req, res) => {
             message: "could not find alternatives for this product",
         });
     }
+    return res.send({ brandSearch });
     let searchTextArr = [];
     for (let i = 0; i < brandSearch.length; i++) {
         searchTextArr.push(brandSearch[i].id + "");
@@ -367,6 +383,21 @@ app.get("/getAlternative", async (req, res) => {
             {
                 brand_search: {
                     id: (0, typeorm_1.In)(searchTextArr),
+                },
+            },
+        ],
+        skip: (req.query.page - 1) * 10,
+        take: 10,
+        relations: ["product"],
+    });
+    return res.send({ productBrandSearch });
+});
+app.get("/getAlternativeProducts", async (req, res) => {
+    let productBrandSearch = await ProductBrandSearch_1.ProductBrandSearch.find({
+        where: [
+            {
+                brand_search: {
+                    id: (0, typeorm_1.In)(JSON.parse(req.query.id)),
                 },
             },
         ],

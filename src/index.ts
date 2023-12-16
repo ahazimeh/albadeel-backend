@@ -429,6 +429,23 @@ app.get("/getAlternativeId", async (req, res) => {
     message: "could not find alternatives for this product",
   });
 });
+
+app.get("/getAlternativeBrand", async (req, res) => {
+  const productBrand = await ProductBrand.find({
+    where: [
+      {
+        brand: {
+          id: req.query.id,
+        },
+      },
+    ],
+    skip: (req.query.page - 1) * 10,
+    take: 10,
+    relations: ["product"],
+  });
+  return res.send({ productBrand });
+});
+
 app.get("/getAlternative", async (req, res) => {
   const brandSearch = await BrandSearch.find({
     // @ts-ignore
@@ -445,6 +462,7 @@ app.get("/getAlternative", async (req, res) => {
     });
   }
   // now I will try to get alternatives// to be done in another api
+  return res.send({ brandSearch });
   let searchTextArr: string[] = [];
   for (let i = 0; i < brandSearch.length; i++) {
     searchTextArr.push(brandSearch[i].id + "");
@@ -472,6 +490,27 @@ app.get("/getAlternative", async (req, res) => {
   //   relations: ["product"],
   // });
   // return res.json({ success: true, alternative: productAlternative });
+});
+app.get("/getAlternativeProducts", async (req, res) => {
+  // return res.send({ id: JSON.parse(req.query.id) });
+
+  // for (let i = 0; i < brandSearch.length; i++) {
+  //   searchTextArr.push(brandSearch[i].id + "");
+  // }
+  // // return res.send({ searchTextArr });
+  let productBrandSearch = await ProductBrandSearch.find({
+    where: [
+      {
+        brand_search: {
+          id: In(JSON.parse(req.query.id)),
+        },
+      },
+    ],
+    skip: (req.query.page - 1) * 10,
+    take: 10,
+    relations: ["product"],
+  });
+  return res.send({ productBrandSearch });
 });
 
 // this 1 is by alternative and not brand
