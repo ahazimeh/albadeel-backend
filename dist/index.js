@@ -324,8 +324,12 @@ app.get("/getAlternativeId", async (req, res) => {
     const textArr = req.query.text.split(" ");
     let arr = [];
     for (let i = 0; i < textArr.length; i++) {
-        const alternative = Alternative_1.Alternative.findOneBy({ name: textArr[i] });
-        arr.push(alternative);
+        const brand = Brand_1.Brand.findOne({
+            where: {
+                name: (0, typeorm_1.Like)(`%${textArr[i]}%`),
+            },
+        });
+        arr.push(brand);
     }
     let result = [];
     result = await Promise.all(arr);
@@ -341,13 +345,36 @@ app.get("/getAlternativeId", async (req, res) => {
     });
 });
 app.get("/getAlternative", async (req, res) => {
-    const productAlternative = await ProductAlternative_1.ProductAlternative.find({
-        where: { alternative: { id: req.query.id } },
+    const brandSearch = await BrandSearch_1.BrandSearch.find({
+        where: {
+            brand: {
+                id: req.query.id,
+            },
+        },
+    });
+    if (!brandSearch.length) {
+        return res.json({
+            success: false,
+            message: "could not find alternatives for this product",
+        });
+    }
+    let searchTextArr = [];
+    for (let i = 0; i < brandSearch.length; i++) {
+        searchTextArr.push(brandSearch[i].id + "");
+    }
+    let productBrandSearch = await ProductBrandSearch_1.ProductBrandSearch.find({
+        where: [
+            {
+                brand_search: {
+                    id: (0, typeorm_1.In)(searchTextArr),
+                },
+            },
+        ],
         skip: (req.query.page - 1) * 10,
         take: 10,
         relations: ["product"],
     });
-    return res.json({ success: true, alternative: productAlternative });
+    return res.send({ productBrandSearch });
 });
 app.get("/brand", async (req, res) => {
     const reqBrand = req.query.brand;

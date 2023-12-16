@@ -17,7 +17,7 @@ import { Brand } from "./entity/Brand";
 import { scrapeBrand, scrapeWebsite } from "./utils/scrapWebsite";
 import { comapnies } from "./companies";
 import { ProductAlternative } from "./entity/ProductAlternative";
-import { ILike, IsNull, Not } from "typeorm";
+import { ILike, In, IsNull, Like, Not } from "typeorm";
 import { ProductNotFound } from "./entity/ProductNotFound";
 import { ProductBrand } from "./entity/ProductBrand";
 import parser from "csv-parser";
@@ -408,8 +408,13 @@ app.get("/getAlternativeId", async (req, res) => {
   // Promise.all(textArr)
   let arr = [];
   for (let i = 0; i < textArr.length; i++) {
-    const alternative = Alternative.findOneBy({ name: textArr[i] });
-    arr.push(alternative);
+    const brand = Brand.findOne({
+      // name: textArr[i]
+      where: {
+        name: Like(`%${textArr[i]}%`),
+      },
+    });
+    arr.push(brand);
   }
   let result: any = [];
   result = await Promise.all(arr);
@@ -424,18 +429,92 @@ app.get("/getAlternativeId", async (req, res) => {
     message: "could not find alternatives for this product",
   });
 });
-
 app.get("/getAlternative", async (req, res) => {
-  const productAlternative = await ProductAlternative.find({
+  const brandSearch = await BrandSearch.find({
     // @ts-ignore
-    where: { alternative: { id: req.query.id } },
-    // @ts-ignore
+    where: {
+      brand: {
+        id: req.query.id,
+      },
+    },
+  });
+  if (!brandSearch.length) {
+    return res.json({
+      success: false,
+      message: "could not find alternatives for this product",
+    });
+  }
+  // now I will try to get alternatives// to be done in another api
+  let searchTextArr: string[] = [];
+  for (let i = 0; i < brandSearch.length; i++) {
+    searchTextArr.push(brandSearch[i].id + "");
+  }
+  // return res.send({ searchTextArr });
+  let productBrandSearch = await ProductBrandSearch.find({
+    where: [
+      {
+        brand_search: {
+          id: In(searchTextArr),
+        },
+      },
+    ],
     skip: (req.query.page - 1) * 10,
     take: 10,
     relations: ["product"],
   });
-  return res.json({ success: true, alternative: productAlternative });
+  return res.send({ productBrandSearch });
+  // const productAlternative = await ProductAlternative.find({
+  //   // @ts-ignore
+  //   where: { alternative: { id: req.query.id } },
+  //   // @ts-ignore
+  //   skip: (req.query.page - 1) * 10,
+  //   take: 10,
+  //   relations: ["product"],
+  // });
+  // return res.json({ success: true, alternative: productAlternative });
 });
+
+// this 1 is by alternative and not brand
+// app.get("/getAlternativeId", async (req, res) => {
+//   // console.log(req.query.text.split(" "));
+//   // @ts-ignore
+//   const textArr = req.query.text.split(" ");
+//   // Promise.all(textArr)
+//   let arr = [];
+//   for (let i = 0; i < textArr.length; i++) {
+//     const alternative = Alternative.findOne({
+//       // name: textArr[i]
+//       where: {
+//         name: Like(`%${textArr[i]}%`),
+//       },
+//     });
+//     arr.push(alternative);
+//   }
+//   let result: any = [];
+//   result = await Promise.all(arr);
+//   console.log("fff1", result);
+//   for (let i = 0; i < result.length; i++) {
+//     if (result[i]) {
+//       return res.json({ success: true, alternativeId: result[i].id });
+//     }
+//   }
+//   return res.json({
+//     success: false,
+//     message: "could not find alternatives for this product",
+//   });
+// });
+
+// app.get("/getAlternative", async (req, res) => {
+//   const productAlternative = await ProductAlternative.find({
+//     // @ts-ignore
+//     where: { alternative: { id: req.query.id } },
+//     // @ts-ignore
+//     skip: (req.query.page - 1) * 10,
+//     take: 10,
+//     relations: ["product"],
+//   });
+//   return res.json({ success: true, alternative: productAlternative });
+// });
 
 app.get("/brand", async (req, res) => {
   const reqBrand = req.query.brand;
