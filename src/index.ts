@@ -29,6 +29,7 @@ import { ProductBrandSearch } from "./entity/ProductBrandSearch";
 import { comapniesCsv } from "./companiesCsv";
 import { AlternativeSearch } from "./entity/AlternativeSearch";
 import { ProductAlternativeSearch } from "./entity/ProductAlternativeSearch";
+import Jwt from "jsonwebtoken";
 
 var app = express();
 
@@ -104,7 +105,8 @@ app.post("/login", async (req, res) => {
         req.body.password,
         findUser.password
       );
-      if (comparePass) return res.json({ success: true, token: "asdasda" });
+      let token = Jwt.sign({ id: user.id }, "sesfksdjfkdsfj");
+      if (comparePass) return res.json({ success: true, token });
     }
     return res.json({ success: false });
   } catch (err) {
@@ -112,6 +114,9 @@ app.post("/login", async (req, res) => {
   }
 });
 app.post("/register", async (req, res) => {
+  let token = Jwt.sign({ foo: "bar" }, "shhhhh");
+  // var decoded = Jwt.verify(token, "shhhhh1");
+  // return res.send({ token });
   try {
     const findUser = await User.findOneBy({ email: req.body.email });
     if (findUser) {
@@ -125,7 +130,8 @@ app.post("/register", async (req, res) => {
     user.city = req.body.city;
     user.country = req.body.country;
     await user.save();
-    return res.json({ success: true });
+    let token = Jwt.sign({ id: user.id }, "sesfksdjfkdsfj");
+    return res.json({ success: true, token });
   } catch (err) {
     return res.json({ success: false, message: "an error has occured" });
   }
@@ -652,6 +658,11 @@ app.get("/testPuppeteer", async (req, res, next) => {
     return res.send({ success: false, message: "an error has occured" });
   }
   return res.send({ success: true });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something went wrong!");
 });
 
 app.listen(process.env.PORT || 3000, () => {

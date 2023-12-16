@@ -53,6 +53,7 @@ const ProductBrandSearch_1 = require("./entity/ProductBrandSearch");
 const companiesCsv_1 = require("./companiesCsv");
 const AlternativeSearch_1 = require("./entity/AlternativeSearch");
 const ProductAlternativeSearch_1 = require("./entity/ProductAlternativeSearch");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var app = (0, express_1.default)();
 var jsonParser = body_parser_1.default.json();
 var urlencodedParser = body_parser_1.default.urlencoded({ extended: false });
@@ -99,8 +100,9 @@ app.post("/login", async (req, res) => {
         const findUser = await User_1.User.findOneBy({ email: req.body.email });
         if (findUser) {
             const comparePass = await bcrypt_1.default.compare(req.body.password, findUser.password);
+            let token = jsonwebtoken_1.default.sign({ id: user.id }, "sesfksdjfkdsfj");
             if (comparePass)
-                return res.json({ success: true, token: "asdasda" });
+                return res.json({ success: true, token });
         }
         return res.json({ success: false });
     }
@@ -109,6 +111,7 @@ app.post("/login", async (req, res) => {
     }
 });
 app.post("/register", async (req, res) => {
+    let token = jsonwebtoken_1.default.sign({ foo: "bar" }, "shhhhh");
     try {
         const findUser = await User_1.User.findOneBy({ email: req.body.email });
         if (findUser) {
@@ -122,7 +125,8 @@ app.post("/register", async (req, res) => {
         user.city = req.body.city;
         user.country = req.body.country;
         await user.save();
-        return res.json({ success: true });
+        let token = jsonwebtoken_1.default.sign({ id: user.id }, "sesfksdjfkdsfj");
+        return res.json({ success: true, token });
     }
     catch (err) {
         return res.json({ success: false, message: "an error has occured" });
@@ -488,6 +492,10 @@ app.get("/testPuppeteer", async (req, res, next) => {
         return res.send({ success: false, message: "an error has occured" });
     }
     return res.send({ success: true });
+});
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something went wrong!");
 });
 app.listen(process.env.PORT || 3000, () => {
     console.log("server started on localhost:3000");
