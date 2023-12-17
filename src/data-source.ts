@@ -18,10 +18,7 @@ export const AppDataSource = new DataSource({
   username: process.env.NODE_ENV === "development1" ? "root" : "albadeel_root",
   password:
     process.env.NODE_ENV === "development1" ? "password" : "Venvt$Z4.Yi-",
-  database:
-    process.env.NODE_ENV === "development1"
-      ? "check_if_support"
-      : "albadeel_db",
+  database: process.env.NODE_ENV === "development1" ? "testDb" : "albadeel_db",
   synchronize: true,
   logging: true,
   entities: [
