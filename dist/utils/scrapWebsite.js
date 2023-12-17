@@ -309,6 +309,7 @@ const scrapeBrand = async (url, brandId, brandSearchId) => {
         await BrandSearch_1.BrandSearch.save({
             id: brandSearchId,
             completed: true,
+            partial: true,
         });
     }
     await browser.close();

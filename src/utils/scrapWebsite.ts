@@ -410,6 +410,7 @@ export const scrapeBrand = async (
     await BrandSearch.save({
       id: brandSearchId,
       completed: true,
+      partial: true,
     });
   }
 
