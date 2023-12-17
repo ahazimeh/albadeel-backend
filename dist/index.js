@@ -348,8 +348,23 @@ app.post("/storeBrands", async (req, res) => {
 });
 app.get("/getAlternativeId", async (req, res) => {
     const textArr = req.query.text.split(" ");
+    const reqBrand = req.query.brand;
+    if (reqBrand) {
+        const fetchBrand = await Brand_1.Brand.findOne({
+            where: {
+                name: reqBrand,
+            },
+        });
+        if (fetchBrand) {
+            return res.json({ success: true, alternativeId: fetchBrand.id });
+        }
+    }
     let arr = [];
+    let ignoreText = ["a", "an", "and", "&", "of", "+", "/"];
     for (let i = 0; i < textArr.length; i++) {
+        if (ignoreText.includes(textArr[i])) {
+            continue;
+        }
         const brand = Brand_1.Brand.findOne({
             where: {
                 name: (0, typeorm_1.Like)(`%${textArr[i]}%`),
