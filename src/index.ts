@@ -51,7 +51,7 @@ AppDataSource.initialize()
     // here you can start to work with your database
   })
   .catch((error) => {
-    a = "could not connect";
+    a = error.message;
     console.log(error);
   });
 

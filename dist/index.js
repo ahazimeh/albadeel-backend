@@ -66,7 +66,7 @@ data_source_1.AppDataSource.initialize()
     a = "success";
 })
     .catch((error) => {
-    a = "could not connect";
+    a = error.message;
     console.log(error);
 });
 const url1 = "https://www.barcodelookup.com/7up/1";
