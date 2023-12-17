@@ -19,6 +19,9 @@ function incrementLastNumberInUrl(url: string) {
     // Extract the matched number, increment it by 1, and replace it in the URL
     let incrementedNumber = parseInt(match[1]) + 1;
     let newUrl = url.replace(/\/\d+(?:\/)?$/, "/" + incrementedNumber);
+    if (incrementedNumber >= 10) {
+      return -1;
+    }
     return newUrl;
   } else {
     // If no number is found, return the original URL
@@ -203,8 +206,16 @@ export const scrapeWebsite = async (
   });
   const linkExists = $(`a[href="${incrementLastNumberInUrl(url)}"]`).length > 0;
   console.log("asdas", linkExists);
+  let newUrl = incrementLastNumberInUrl(url);
   if (linkExists) {
-    await scrapeWebsite(incrementLastNumberInUrl(url), id, alternativeSearchId);
+    if (newUrl === -1) {
+      await AlternativeSearch.save({
+        id: alternativeSearchId,
+        completed: true,
+      });
+    } else {
+      await scrapeWebsite(newUrl + "", id, alternativeSearchId);
+    }
   } else {
     await AlternativeSearch.save({
       id: alternativeSearchId,
@@ -384,8 +395,17 @@ export const scrapeBrand = async (
   // return;
   const linkExists = $(`a[href="${incrementLastNumberInUrl(url)}"]`).length > 0;
   console.log("asdas", linkExists);
+  let newUrl = incrementLastNumberInUrl(url);
   if (linkExists) {
-    await scrapeBrand(incrementLastNumberInUrl(url), brandId, brandSearchId);
+    if (newUrl === -1) {
+      await BrandSearch.save({
+        id: brandSearchId,
+        completed: true,
+        partial: true,
+      });
+    } else {
+      await scrapeBrand(newUrl + "", brandId, brandSearchId);
+    }
   } else {
     await BrandSearch.save({
       id: brandSearchId,

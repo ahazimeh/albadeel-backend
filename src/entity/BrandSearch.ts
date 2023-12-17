@@ -21,6 +21,9 @@ export class BrandSearch extends BaseEntity {
   @Column({ nullable: true })
   searchText: string;
 
+  @Column({ nullable: true, default: false })
+  partial: boolean;
+
   @ManyToOne(() => Brand, (brand) => brand.id)
   @JoinColumn({ name: "brand_id" })
   brand: Brand;

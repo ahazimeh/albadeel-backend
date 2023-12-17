@@ -25,6 +25,10 @@ __decorate([
     __metadata("design:type", String)
 ], BrandSearch.prototype, "searchText", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true, default: false }),
+    __metadata("design:type", Boolean)
+], BrandSearch.prototype, "partial", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => Brand_1.Brand, (brand) => brand.id),
     (0, typeorm_1.JoinColumn)({ name: "brand_id" }),
     __metadata("design:type", Brand_1.Brand)

@@ -43,6 +43,9 @@ function incrementLastNumberInUrl(url) {
     if (match && match[1]) {
         let incrementedNumber = parseInt(match[1]) + 1;
         let newUrl = url.replace(/\/\d+(?:\/)?$/, "/" + incrementedNumber);
+        if (incrementedNumber >= 10) {
+            return -1;
+        }
         return newUrl;
     }
     else {
@@ -163,8 +166,17 @@ const scrapeWebsite = async (url, id, alternativeSearchId) => {
     });
     const linkExists = $(`a[href="${incrementLastNumberInUrl(url)}"]`).length > 0;
     console.log("asdas", linkExists);
+    let newUrl = incrementLastNumberInUrl(url);
     if (linkExists) {
-        await (0, exports.scrapeWebsite)(incrementLastNumberInUrl(url), id, alternativeSearchId);
+        if (newUrl === -1) {
+            await AlternativeSearch_1.AlternativeSearch.save({
+                id: alternativeSearchId,
+                completed: true,
+            });
+        }
+        else {
+            await (0, exports.scrapeWebsite)(newUrl + "", id, alternativeSearchId);
+        }
     }
     else {
         await AlternativeSearch_1.AlternativeSearch.save({
@@ -280,8 +292,18 @@ const scrapeBrand = async (url, brandId, brandSearchId) => {
     });
     const linkExists = $(`a[href="${incrementLastNumberInUrl(url)}"]`).length > 0;
     console.log("asdas", linkExists);
+    let newUrl = incrementLastNumberInUrl(url);
     if (linkExists) {
-        await (0, exports.scrapeBrand)(incrementLastNumberInUrl(url), brandId, brandSearchId);
+        if (newUrl === -1) {
+            await BrandSearch_1.BrandSearch.save({
+                id: brandSearchId,
+                completed: true,
+                partial: true,
+            });
+        }
+        else {
+            await (0, exports.scrapeBrand)(newUrl + "", brandId, brandSearchId);
+        }
     }
     else {
         await BrandSearch_1.BrandSearch.save({
