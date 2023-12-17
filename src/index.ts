@@ -30,6 +30,7 @@ import { comapniesCsv } from "./companiesCsv";
 import { AlternativeSearch } from "./entity/AlternativeSearch";
 import { ProductAlternativeSearch } from "./entity/ProductAlternativeSearch";
 import Jwt from "jsonwebtoken";
+import { body, query, validationResult } from "express-validator";
 
 var app = express();
 
@@ -113,29 +114,48 @@ app.post("/login", async (req, res) => {
     return res.json({ success: false });
   }
 });
-app.post("/register", async (req, res) => {
-  let token = Jwt.sign({ foo: "bar" }, "shhhhh");
-  // var decoded = Jwt.verify(token, "shhhhh1");
-  // return res.send({ token });
-  try {
-    const findUser = await User.findOneBy({ email: req.body.email });
-    if (findUser) {
-      return res.json({ success: false, message: "email already exists" });
+app.post(
+  "/register",
+  [
+    body("firstName").notEmpty(),
+    body("lastName").notEmpty(),
+    body("email").isEmail(),
+    body("city").notEmpty(),
+    body("country").notEmpty(),
+    body("password").notEmpty(),
+  ],
+  async (req, res) => {
+    const result = validationResult(req);
+    if (result.errors.length) {
+      return res.send({ result: result.errors });
     }
-    const user = new User();
-    user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.email = req.body.email;
-    user.password = await bcrypt.hash(req.body.password, 8);
-    user.city = req.body.city;
-    user.country = req.body.country;
-    await user.save();
-    let token = Jwt.sign({ id: user.id }, "sesfksdjfkdsfj");
-    return res.json({ success: true, token });
-  } catch (err) {
-    return res.json({ success: false, message: "an error has occured" });
+    let token = Jwt.sign({ foo: "bar" }, "shhhhh");
+    // var decoded = Jwt.verify(token, "shhhhh1");
+    // return res.send({ token });
+    try {
+      const findUser = await User.findOneBy({ email: req.body.email });
+      if (findUser) {
+        return res.json({ success: false, message: "email already exists" });
+      }
+      const user = new User();
+      user.firstName = req.body.firstName;
+      user.lastName = req.body.lastName;
+      user.email = req.body.email;
+      user.password = await bcrypt.hash(req.body.password, 8);
+      user.city = req.body.city;
+      user.country = req.body.country;
+      try {
+        await user.save();
+      } catch (err) {
+        return res.send({ err });
+      }
+      let token = Jwt.sign({ id: user.id }, "sesfksdjfkdsfj");
+      return res.json({ success: true, token });
+    } catch (err) {
+      return res.json({ success: false, message: "an error has occured" });
+    }
   }
-});
+);
 app.get("/insertForTesting", async (req, res) => {
   // const alternative = new Alternative();
   // alternative.name = "7up";
@@ -335,54 +355,58 @@ app.get("/insertProductAlternative", async (req, res) => {
 });
 
 app.get("/getProduct/:barcode", async (req, res) => {
-  const product = await Product.findOneBy({ barcode: req.params.barcode });
-  console.log(req.params);
-  if (product) {
-    return res.json({ success: true, product });
-  }
-  let productNotFound = new ProductNotFound();
-  productNotFound.barcode = req.params.barcode;
   try {
-    if (await productNotFound.save()) {
-      // try to find this product online;
-      const response = await axios.get(
-        `https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`,
-        {
-          headers: {
-            "User-Agent": "PostmanRuntime/7.29.4",
-            Accept: "*/*",
-            "Accept-Encoding": "gzip, deflate, br",
-            Connection: "keep-alive",
-          },
-        }
-      );
-      let insertProduct = new Product();
-      insertProduct.barcode = req.params.barcode;
-      insertProduct.category = response.data.products[0].category;
-      insertProduct.manufacturer = response.data.products[0].manufacturer;
-      insertProduct.brand = response.data.products[0].brand;
-      insertProduct.imageUrl = response.data.products[0].images[0];
-      insertProduct.name = response.data.products[0].title;
-      insertProduct.save();
-      return res.json({ success: true, product: insertProduct });
-
-      console.log(response);
-
-      // if found the save it and send it back to the user
-      // if not then also return an error // done because api return error
+    const product = await Product.findOneBy({ barcode: req.params.barcode });
+    console.log(req.params);
+    if (product) {
+      return res.json({ success: true, product });
     }
-    return;
+    let productNotFound = new ProductNotFound();
+    productNotFound.barcode = req.params.barcode;
+    try {
+      if (await productNotFound.save()) {
+        // try to find this product online;
+        const response = await axios.get(
+          `https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`,
+          {
+            headers: {
+              "User-Agent": "PostmanRuntime/7.29.4",
+              Accept: "*/*",
+              "Accept-Encoding": "gzip, deflate, br",
+              Connection: "keep-alive",
+            },
+          }
+        );
+        let insertProduct = new Product();
+        insertProduct.barcode = req.params.barcode;
+        insertProduct.category = response.data.products[0].category;
+        insertProduct.manufacturer = response.data.products[0].manufacturer;
+        insertProduct.brand = response.data.products[0].brand;
+        insertProduct.imageUrl = response.data.products[0].images[0];
+        insertProduct.name = response.data.products[0].title;
+        insertProduct.save();
+        return res.json({ success: true, product: insertProduct });
+
+        console.log(response);
+
+        // if found the save it and send it back to the user
+        // if not then also return an error // done because api return error
+      }
+      return;
+    } catch (err) {
+      return res.send({ success: false, message: "product not found" });
+    }
+    // const response = await axios.get(`https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`, {
+    //   headers: {
+    //     "User-Agent": "PostmanRuntime/7.29.4",
+    //     Accept: "*/*",
+    //     "Accept-Encoding": "gzip, deflate, br",
+    //     Connection: "keep-alive",
+    //   },
+    // });
   } catch (err) {
-    return res.send({ success: false, message: "product not found" });
+    return res.send({ message: "an error has occured" });
   }
-  // const response = await axios.get(`https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`, {
-  //   headers: {
-  //     "User-Agent": "PostmanRuntime/7.29.4",
-  //     Accept: "*/*",
-  //     "Accept-Encoding": "gzip, deflate, br",
-  //     Connection: "keep-alive",
-  //   },
-  // });
 });
 console.log("sssssssssssssssss", process.env.NODE_ENV);
 app.get("/insertIntoProductNotFound", async (req, res) => {

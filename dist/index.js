@@ -54,6 +54,7 @@ const companiesCsv_1 = require("./companiesCsv");
 const AlternativeSearch_1 = require("./entity/AlternativeSearch");
 const ProductAlternativeSearch_1 = require("./entity/ProductAlternativeSearch");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const express_validator_1 = require("express-validator");
 var app = (0, express_1.default)();
 var jsonParser = body_parser_1.default.json();
 var urlencodedParser = body_parser_1.default.urlencoded({ extended: false });
@@ -110,7 +111,18 @@ app.post("/login", async (req, res) => {
         return res.json({ success: false });
     }
 });
-app.post("/register", async (req, res) => {
+app.post("/register", [
+    (0, express_validator_1.body)("firstName").notEmpty(),
+    (0, express_validator_1.body)("lastName").notEmpty(),
+    (0, express_validator_1.body)("email").isEmail(),
+    (0, express_validator_1.body)("city").notEmpty(),
+    (0, express_validator_1.body)("country").notEmpty(),
+    (0, express_validator_1.body)("password").notEmpty(),
+], async (req, res) => {
+    const result = (0, express_validator_1.validationResult)(req);
+    if (result.errors.length) {
+        return res.send({ result: result.errors });
+    }
     let token = jsonwebtoken_1.default.sign({ foo: "bar" }, "shhhhh");
     try {
         const findUser = await User_1.User.findOneBy({ email: req.body.email });
@@ -124,7 +136,12 @@ app.post("/register", async (req, res) => {
         user.password = await bcrypt_1.default.hash(req.body.password, 8);
         user.city = req.body.city;
         user.country = req.body.country;
-        await user.save();
+        try {
+            await user.save();
+        }
+        catch (err) {
+            return res.send({ err });
+        }
         let token = jsonwebtoken_1.default.sign({ id: user.id }, "sesfksdjfkdsfj");
         return res.json({ success: true, token });
     }
@@ -267,38 +284,43 @@ app.get("/insertProductAlternative", async (req, res) => {
     return res.send("hii");
 });
 app.get("/getProduct/:barcode", async (req, res) => {
-    const product = await Product_1.Product.findOneBy({ barcode: req.params.barcode });
-    console.log(req.params);
-    if (product) {
-        return res.json({ success: true, product });
-    }
-    let productNotFound = new ProductNotFound_1.ProductNotFound();
-    productNotFound.barcode = req.params.barcode;
     try {
-        if (await productNotFound.save()) {
-            const response = await axios_1.default.get(`https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`, {
-                headers: {
-                    "User-Agent": "PostmanRuntime/7.29.4",
-                    Accept: "*/*",
-                    "Accept-Encoding": "gzip, deflate, br",
-                    Connection: "keep-alive",
-                },
-            });
-            let insertProduct = new Product_1.Product();
-            insertProduct.barcode = req.params.barcode;
-            insertProduct.category = response.data.products[0].category;
-            insertProduct.manufacturer = response.data.products[0].manufacturer;
-            insertProduct.brand = response.data.products[0].brand;
-            insertProduct.imageUrl = response.data.products[0].images[0];
-            insertProduct.name = response.data.products[0].title;
-            insertProduct.save();
-            return res.json({ success: true, product: insertProduct });
-            console.log(response);
+        const product = await Product_1.Product.findOneBy({ barcode: req.params.barcode });
+        console.log(req.params);
+        if (product) {
+            return res.json({ success: true, product });
         }
-        return;
+        let productNotFound = new ProductNotFound_1.ProductNotFound();
+        productNotFound.barcode = req.params.barcode;
+        try {
+            if (await productNotFound.save()) {
+                const response = await axios_1.default.get(`https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`, {
+                    headers: {
+                        "User-Agent": "PostmanRuntime/7.29.4",
+                        Accept: "*/*",
+                        "Accept-Encoding": "gzip, deflate, br",
+                        Connection: "keep-alive",
+                    },
+                });
+                let insertProduct = new Product_1.Product();
+                insertProduct.barcode = req.params.barcode;
+                insertProduct.category = response.data.products[0].category;
+                insertProduct.manufacturer = response.data.products[0].manufacturer;
+                insertProduct.brand = response.data.products[0].brand;
+                insertProduct.imageUrl = response.data.products[0].images[0];
+                insertProduct.name = response.data.products[0].title;
+                insertProduct.save();
+                return res.json({ success: true, product: insertProduct });
+                console.log(response);
+            }
+            return;
+        }
+        catch (err) {
+            return res.send({ success: false, message: "product not found" });
+        }
     }
     catch (err) {
-        return res.send({ success: false, message: "product not found" });
+        return res.send({ message: "an error has occured" });
     }
 });
 console.log("sssssssssssssssss", process.env.NODE_ENV);
