@@ -17,9 +17,9 @@ exports.AppDataSource = new typeorm_1.DataSource({
     type: "mysql",
     host: "localhost",
     port: 3306,
-    username: process.env.NODE_ENV === "development1" ? "root" : "albadeelroot",
+    username: process.env.NODE_ENV === "development1" ? "root" : "albadeel_root",
     password: process.env.NODE_ENV === "development1" ? "password" : "Venvt$Z4.Yi-",
-    database: process.env.NODE_ENV === "development1" ? "testDb" : "albadeeldb",
+    database: process.env.NODE_ENV === "development1" ? "testDb" : "albadeel_db",
     synchronize: true,
     logging: true,
     entities: [
