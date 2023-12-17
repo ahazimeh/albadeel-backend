@@ -665,6 +665,6 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong!");
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("server started on localhost:3000");
+app.listen(process.env.PORT || 4000, () => {
+  console.log("server started on localhost:4000");
 });
