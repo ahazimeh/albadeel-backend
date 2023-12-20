@@ -31,6 +31,7 @@ import { AlternativeSearch } from "./entity/AlternativeSearch";
 import { ProductAlternativeSearch } from "./entity/ProductAlternativeSearch";
 import Jwt from "jsonwebtoken";
 import { body, query, validationResult } from "express-validator";
+import path from "path";
 
 var app = express();
 
@@ -684,8 +685,20 @@ app.get("/getRequest", (req, res, next) => {
   return res.send({ success: true });
 });
 console.log("asdjaskl");
-app.post("/postRequest", (req, res, next) => {
-  return res.send({ success: true });
+app.post("/delete-account", async (req, res, next) => {
+  try {
+    const user = await User.findOneBy({ email: req.body.email });
+    const password = user?.password;
+
+    const comparePass = await bcrypt.compare(req.body.password, password);
+    if (comparePass) {
+      User.delete(user.id);
+      return res.redirect("/delete-account");
+    }
+    return res.redirect("/delete-account");
+  } catch (err) {
+    return res.redirect("/delete-account");
+  }
 });
 
 app.get("/testPuppeteer", async (req, res, next) => {
@@ -698,6 +711,24 @@ app.get("/testPuppeteer", async (req, res, next) => {
   }
   return res.send({ success: true });
 });
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/privacy-policy", (req, res, next) => {
+  console.log("ASdasd", path);
+  console.log(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/delete-account", (req, res, next) => {
+  console.log("ASdasd", path);
+  console.log(path.join(__dirname, "public", "form.html"));
+  res.sendFile(path.join(__dirname, "public", "form.html"));
+});
+
+// app.post("/delete-account", (req, res, next) => {
+//   res.send({ hi: "" });
+// });
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -48,6 +48,7 @@ const ProductNotFound_1 = require("./entity/ProductNotFound");
 const ProductBrand_1 = require("./entity/ProductBrand");
 const csv_parser_1 = __importDefault(require("csv-parser"));
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const BrandSearch_1 = require("./entity/BrandSearch");
 const ProductBrandSearch_1 = require("./entity/ProductBrandSearch");
 const companiesCsv_1 = require("./companiesCsv");
@@ -516,8 +517,20 @@ app.get("/getRequest", (req, res, next) => {
     return res.send({ success: true });
 });
 console.log("asdjaskl");
-app.post("/postRequest", (req, res, next) => {
-    return res.send({ success: true });
+app.post("/delete-account", async (req, res, next) => {
+    try {
+        const user = await User_1.User.findOneBy({ email: req.body.email });
+        const password = user === null || user === void 0 ? void 0 : user.password;
+        const comparePass = await bcrypt_1.default.compare(req.body.password, password);
+        if (comparePass) {
+            User_1.User.delete(user.id);
+            return res.redirect("/delete-account");
+        }
+        return res.redirect("/delete-account");
+    }
+    catch (err) {
+        return res.redirect("/delete-account");
+    }
 });
 app.get("/testPuppeteer", async (req, res, next) => {
     try {
@@ -529,6 +542,17 @@ app.get("/testPuppeteer", async (req, res, next) => {
         return res.send({ success: false, message: "an error has occured" });
     }
     return res.send({ success: true });
+});
+app.use(express_1.default.static(path_1.default.join(__dirname, "public")));
+app.get("/privacy-policy", (req, res, next) => {
+    console.log("ASdasd", path_1.default);
+    console.log(path_1.default.join(__dirname, "public", "index.html"));
+    res.sendFile(path_1.default.join(__dirname, "public", "index.html"));
+});
+app.get("/delete-account", (req, res, next) => {
+    console.log("ASdasd", path_1.default);
+    console.log(path_1.default.join(__dirname, "public", "form.html"));
+    res.sendFile(path_1.default.join(__dirname, "public", "form.html"));
 });
 app.use((err, req, res, next) => {
     console.error(err.stack);
