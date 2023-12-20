@@ -295,7 +295,7 @@ app.get("/getProduct/:barcode", async (req, res) => {
         productNotFound.barcode = req.params.barcode;
         try {
             if (await productNotFound.save()) {
-                const response = await axios_1.default.get(`https://api.barcodelookup.com/v3/products?key=8wyacernrjzq2p3i9kuh0nw5drwur6&barcode=${req.params.barcode}`, {
+                const response = await axios_1.default.get(`https://api.barcodelookup.com/v3/products?key=jnleqjbhrnmmba2tiln6ujhrh5qgp7&barcode=${req.params.barcode}`, {
                     headers: {
                         "User-Agent": "PostmanRuntime/7.29.4",
                         Accept: "*/*",
