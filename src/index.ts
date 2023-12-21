@@ -107,7 +107,7 @@ app.post("/login", async (req, res) => {
         req.body.password,
         findUser.password
       );
-      let token = Jwt.sign({ id: user.id }, "sesfksdjfkdsfj");
+      let token = Jwt.sign({ id: findUser.id }, "sesfksdjfkdsfj");
       if (comparePass) return res.json({ success: true, token });
     }
     return res.json({ success: false });

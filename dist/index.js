@@ -102,7 +102,7 @@ app.post("/login", async (req, res) => {
         const findUser = await User_1.User.findOneBy({ email: req.body.email });
         if (findUser) {
             const comparePass = await bcrypt_1.default.compare(req.body.password, findUser.password);
-            let token = jsonwebtoken_1.default.sign({ id: user.id }, "sesfksdjfkdsfj");
+            let token = jsonwebtoken_1.default.sign({ id: findUser.id }, "sesfksdjfkdsfj");
             if (comparePass)
                 return res.json({ success: true, token });
         }
