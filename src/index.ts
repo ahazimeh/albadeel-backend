@@ -434,130 +434,146 @@ app.post("/storeBrands", async (req, res) => {
 });
 
 app.get("/getAlternativeId", async (req, res) => {
-  // console.log(req.query.text.split(" "));
-  // @ts-ignore
-  const textArr = req.query.text.split(" ");
-  const reqBrand = req.query.brand;
-  if (reqBrand) {
-    const fetchBrand = await Brand.findOne({
-      where: {
-        name: reqBrand,
-      },
-    });
-    if (fetchBrand) {
-      return res.json({ success: true, alternativeId: fetchBrand.id });
-    }
-  }
-  // Promise.all(textArr)
-  let arr = [];
-  let ignoreText = ["a", "an", "and", "&", "of", "+", "/"];
-  for (let i = 0; i < textArr.length; i++) {
-    if (ignoreText.includes(textArr[i])) {
-      continue;
-    }
-    const brand = Brand.findOne({
-      // name: textArr[i]
-      where: {
-        name: Like(`%${textArr[i]}%`),
-      },
-    });
-    arr.push(brand);
-  }
-  let result: any = [];
-  result = await Promise.all(arr);
-  console.log("fff1", result);
-  for (let i = 0; i < result.length; i++) {
-    if (result[i]) {
-      return res.json({ success: true, alternativeId: result[i].id });
-    }
-  }
-  return res.json({
-    success: false,
-    message: "could not find alternatives for this product",
-  });
-});
-
-app.get("/getAlternativeBrand", async (req, res) => {
-  const productBrand = await ProductBrand.find({
-    where: [
-      {
-        brand: {
-          id: req.query.id,
-        },
-      },
-    ],
-    skip: (req.query.page - 1) * 10,
-    take: 10,
-    relations: ["product"],
-  });
-  return res.send({ productBrand });
-});
-
-app.get("/getAlternative", async (req, res) => {
-  const brandSearch = await BrandSearch.find({
+  try {
+    // console.log(req.query.text.split(" "));
     // @ts-ignore
-    where: {
-      brand: {
-        id: req.query.id,
-      },
-    },
-  });
-  if (!brandSearch.length) {
+    const textArr = req.query.text.split(" ");
+    const reqBrand = req.query.brand;
+    if (reqBrand) {
+      const fetchBrand = await Brand.findOne({
+        where: {
+          name: reqBrand,
+        },
+      });
+      if (fetchBrand) {
+        return res.json({ success: true, alternativeId: fetchBrand.id });
+      }
+    }
+    // Promise.all(textArr)
+    let arr = [];
+    let ignoreText = ["a", "an", "and", "&", "of", "+", "/"];
+    for (let i = 0; i < textArr.length; i++) {
+      if (ignoreText.includes(textArr[i])) {
+        continue;
+      }
+      const brand = Brand.findOne({
+        // name: textArr[i]
+        where: {
+          name: Like(`%${textArr[i]}%`),
+        },
+      });
+      arr.push(brand);
+    }
+    let result: any = [];
+    result = await Promise.all(arr);
+    console.log("fff1", result);
+    for (let i = 0; i < result.length; i++) {
+      if (result[i]) {
+        return res.json({ success: true, alternativeId: result[i].id });
+      }
+    }
     return res.json({
       success: false,
       message: "could not find alternatives for this product",
     });
+  } catch (err) {
+    return res.json({ success: false });
   }
-  // now I will try to get alternatives// to be done in another api
-  return res.send({ brandSearch });
-  let searchTextArr: string[] = [];
-  for (let i = 0; i < brandSearch.length; i++) {
-    searchTextArr.push(brandSearch[i].id + "");
+});
+
+app.get("/getAlternativeBrand", async (req, res) => {
+  try {
+    const productBrand = await ProductBrand.find({
+      where: [
+        {
+          brand: {
+            id: req.query.id,
+          },
+        },
+      ],
+      skip: (req.query.page - 1) * 10,
+      take: 10,
+      relations: ["product"],
+    });
+    return res.send({ productBrand });
+  } catch (err) {
+    return res.json({ success: false });
   }
-  // return res.send({ searchTextArr });
-  let productBrandSearch = await ProductBrandSearch.find({
-    where: [
-      {
-        brand_search: {
-          id: In(searchTextArr),
+});
+
+app.get("/getAlternative", async (req, res) => {
+  try {
+    const brandSearch = await BrandSearch.find({
+      // @ts-ignore
+      where: {
+        brand: {
+          id: req.query.id,
         },
       },
-    ],
-    skip: (req.query.page - 1) * 10,
-    take: 10,
-    relations: ["product"],
-  });
-  return res.send({ productBrandSearch });
-  // const productAlternative = await ProductAlternative.find({
-  //   // @ts-ignore
-  //   where: { alternative: { id: req.query.id } },
-  //   // @ts-ignore
-  //   skip: (req.query.page - 1) * 10,
-  //   take: 10,
-  //   relations: ["product"],
-  // });
-  // return res.json({ success: true, alternative: productAlternative });
+    });
+    if (!brandSearch.length) {
+      return res.json({
+        success: false,
+        message: "could not find alternatives for this product",
+      });
+    }
+    // now I will try to get alternatives// to be done in another api
+    return res.send({ brandSearch });
+    let searchTextArr: string[] = [];
+    for (let i = 0; i < brandSearch.length; i++) {
+      searchTextArr.push(brandSearch[i].id + "");
+    }
+    // return res.send({ searchTextArr });
+    let productBrandSearch = await ProductBrandSearch.find({
+      where: [
+        {
+          brand_search: {
+            id: In(searchTextArr),
+          },
+        },
+      ],
+      skip: (req.query.page - 1) * 10,
+      take: 10,
+      relations: ["product"],
+    });
+    return res.send({ productBrandSearch });
+    // const productAlternative = await ProductAlternative.find({
+    //   // @ts-ignore
+    //   where: { alternative: { id: req.query.id } },
+    //   // @ts-ignore
+    //   skip: (req.query.page - 1) * 10,
+    //   take: 10,
+    //   relations: ["product"],
+    // });
+    // return res.json({ success: true, alternative: productAlternative });
+  } catch (err) {
+    return res.json({ success: false });
+  }
 });
 app.get("/getAlternativeProducts", async (req, res) => {
-  // return res.send({ id: JSON.parse(req.query.id) });
+  try {
+    // return res.send({ id: JSON.parse(req.query.id) });
 
-  // for (let i = 0; i < brandSearch.length; i++) {
-  //   searchTextArr.push(brandSearch[i].id + "");
-  // }
-  // // return res.send({ searchTextArr });
-  let productBrandSearch = await ProductBrandSearch.find({
-    where: [
-      {
-        brand_search: {
-          id: In(JSON.parse(req.query.id)),
+    // for (let i = 0; i < brandSearch.length; i++) {
+    //   searchTextArr.push(brandSearch[i].id + "");
+    // }
+    // // return res.send({ searchTextArr });
+    let productBrandSearch = await ProductBrandSearch.find({
+      where: [
+        {
+          brand_search: {
+            id: In(JSON.parse(req.query.id)),
+          },
         },
-      },
-    ],
-    skip: (req.query.page - 1) * 10,
-    take: 10,
-    relations: ["product"],
-  });
-  return res.send({ productBrandSearch });
+      ],
+      skip: (req.query.page - 1) * 10,
+      take: 10,
+      relations: ["product"],
+    });
+    return res.send({ productBrandSearch });
+  } catch (err) {
+    return res.json({ success: false });
+  }
 });
 
 // this 1 is by alternative and not brand
@@ -603,28 +619,36 @@ app.get("/getAlternativeProducts", async (req, res) => {
 // });
 
 app.get("/brand", async (req, res) => {
-  const reqBrand = req.query.brand;
-  if (!reqBrand) {
-    return res.json({ success: true, brand: null });
+  try {
+    const reqBrand = req.query.brand;
+    if (!reqBrand) {
+      return res.json({ success: true, brand: null });
+    }
+    console.log("asdsad", reqBrand);
+    const brand = await Brand.findOneBy({ name: reqBrand as string });
+    return res.json({ success: true, brand });
+  } catch (err) {
+    return res.json({ success: false });
   }
-  console.log("asdsad", reqBrand);
-  const brand = await Brand.findOneBy({ name: reqBrand as string });
-  return res.json({ success: true, brand });
 });
 
 app.get("/brands", async (req, res) => {
-  const reqBrand = req.query.text;
-  if (!reqBrand) {
-    return res.json({ success: true, brand: null });
-  }
-  const brands = await Brand.find({
-    where: {
-      name: ILike(`%${reqBrand}%`),
-    },
-    take: 10,
-  });
+  try {
+    const reqBrand = req.query.text;
+    if (!reqBrand) {
+      return res.json({ success: true, brand: null });
+    }
+    const brands = await Brand.find({
+      where: {
+        name: ILike(`%${reqBrand}%`),
+      },
+      take: 10,
+    });
 
-  return res.json({ success: true, brands });
+    return res.json({ success: true, brands });
+  } catch (err) {
+    return res.json({ success: false });
+  }
 });
 
 app.use((err: any, req: any, res: any, next: any) => {
