@@ -134,11 +134,11 @@ app.post(
     // var decoded = Jwt.verify(token, "shhhhh1");
     // return res.send({ token });
     try {
+      return res.send({ step: 1 });
       const findUser = await User.findOneBy({ email: req.body.email });
       if (findUser) {
         return res.json({ success: false, message: "email already exists" });
       }
-      return res.send({ step: 1 });
       const user = new User();
       user.firstName = req.body.firstName;
       user.lastName = req.body.lastName;
