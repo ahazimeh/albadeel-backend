@@ -127,7 +127,6 @@ app.post("/register", [
     let token = jsonwebtoken_1.default.sign({ foo: "bar" }, "shhhhh");
     try {
         const findUser = await User_1.User.findOneBy({ email: req.body.email });
-        return res.send({ step: 1 });
         if (findUser) {
             return res.json({ success: false, message: "email already exists" });
         }

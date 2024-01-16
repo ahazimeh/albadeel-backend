@@ -135,7 +135,6 @@ app.post(
     // return res.send({ token });
     try {
       const findUser = await User.findOneBy({ email: req.body.email });
-      return res.send({ step: 1 });
       if (findUser) {
         return res.json({ success: false, message: "email already exists" });
       }
