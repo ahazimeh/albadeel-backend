@@ -138,6 +138,7 @@ app.post(
       if (findUser) {
         return res.json({ success: false, message: "email already exists" });
       }
+      return res.send({ step: 1 });
       const user = new User();
       user.firstName = req.body.firstName;
       user.lastName = req.body.lastName;
