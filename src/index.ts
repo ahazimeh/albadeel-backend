@@ -84,7 +84,11 @@ app.get(
   "/",
   // requireLogin ,
   (_, res) => {
-    return res.send({ message: "success", a, env: process.env.NODE_ENV });
+    return res.send({
+      message: "success",
+      error: a,
+      env: process.env.NODE_ENV,
+    });
     // console.log("aazzzz");
     // console.log("aa1a", process.env.ACCESS_TOKEN_SECRET);
     // sendEmail(

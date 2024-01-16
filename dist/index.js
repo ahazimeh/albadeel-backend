@@ -95,7 +95,11 @@ async function getProducts() {
     }
 }
 app.get("/", (_, res) => {
-    return res.send({ message: "success", a, env: process.env.NODE_ENV });
+    return res.send({
+        message: "success",
+        error: a,
+        env: process.env.NODE_ENV,
+    });
 });
 app.post("/login", async (req, res) => {
     try {
