@@ -134,8 +134,8 @@ app.post(
     // var decoded = Jwt.verify(token, "shhhhh1");
     // return res.send({ token });
     try {
-      return res.send({ step: 1 });
       const findUser = await User.findOneBy({ email: req.body.email });
+      return res.send({ step: 1 });
       if (findUser) {
         return res.json({ success: false, message: "email already exists" });
       }
